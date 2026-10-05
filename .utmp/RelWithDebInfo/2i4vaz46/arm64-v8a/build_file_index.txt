@@ -1,0 +1,2 @@
+C:\Users\sethm\OneDrive\Desktop\Spring 2026\CSCE-4905-Capstone\Library\Bee\Android\Prj\IL2CPP\Gradle\unityLibrary\src\main\cpp\CMakeLists.txt
+C:\Users\sethm\OneDrive\Desktop\Spring 2026\CSCE-4905-Capstone\Library\Bee\Android\Prj\IL2CPP\Gradle\unityLibrary\src\main\cpp\GameActivity\CMakeLists.txt
