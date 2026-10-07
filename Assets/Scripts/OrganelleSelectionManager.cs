@@ -1,70 +1,103 @@
-using UnityEngine;
-using UnityEngine.InputSystem;
 using System;
+using UnityEngine;
 
+/// <summary>
+/// Single place that owns "which organelle is selected". Input is detected by ARCellInteraction
+/// (which already separates taps from drags / pinches) and forwarded to TrySelectAtScreenPoint.
+/// Created automatically on first use, so it doesn't have to be placed in the scene.
+/// </summary>
 public class OrganelleSelectionManager : MonoBehaviour
 {
     public static event Action<OrganelleTarget> OnOrganelleSelected;
     public static event Action OnSelectionCleared;
 
     [SerializeField] private Camera arCamera;
-    private OrganelleTarget _currentSelection;
+    [SerializeField] private LayerMask selectableLayers = ~0;
+    [SerializeField] private float maxDistance = 100f;
+
+    private static OrganelleSelectionManager _instance;
+    private static readonly RaycastHit[] HitBuffer = new RaycastHit[64];
+
+    public OrganelleTarget Current { get; private set; }
+
+    public static OrganelleSelectionManager Instance
+    {
+        get
+        {
+            if (_instance == null)
+                _instance = FindFirstObjectByType<OrganelleSelectionManager>();
+
+            if (_instance == null)
+                _instance = new GameObject("OrganelleSelectionManager").AddComponent<OrganelleSelectionManager>();
+
+            return _instance;
+        }
+    }
 
     private void Awake()
     {
-        if (arCamera == null) arCamera = Camera.main;
+        if (_instance != null && _instance != this)
+        {
+            Destroy(gameObject);
+            return;
+        }
+
+        _instance = this;
+
+        // Show the selected organelle's name even if no info panel has been built in the scene.
+        if (FindFirstObjectByType<OrganelleInfoUI>() == null && GetComponent<OrganelleSelectionLabel>() == null)
+            gameObject.AddComponent<OrganelleSelectionLabel>();
     }
 
-    private void Update()
+    /// <summary>Selects the organelle under the screen point, or clears the selection if none was hit.</summary>
+    public bool TrySelectAtScreenPoint(Vector2 screenPoint, Camera cam = null)
     {
-        // Mobile single-tap detection
-        if (Touchscreen.current != null && Touchscreen.current.primaryTouch.press.wasPressedThisFrame)
-        {
-            Vector2 touchPos = Touchscreen.current.primaryTouch.position.ReadValue();
-            HandleRaycast(touchPos);
-        }
-        // Editor / mouse fallback
-        else if (Mouse.current != null && Mouse.current.leftButton.wasPressedThisFrame)
-        {
-            Vector2 mousePos = Mouse.current.position.ReadValue();
-            HandleRaycast(mousePos);
-        }
-    }
+        cam = cam != null ? cam : (arCamera != null ? arCamera : Camera.main);
+        if (cam == null) return false;
 
-    private void HandleRaycast(Vector2 screenPos)
-    {
-        Ray ray = arCamera.ScreenPointToRay(screenPos);
-        if (Physics.Raycast(ray, out RaycastHit hit))
+        Ray ray = cam.ScreenPointToRay(screenPoint);
+        int count = Physics.RaycastNonAlloc(ray, HitBuffer, maxDistance, selectableLayers, QueryTriggerInteraction.Ignore);
+
+        // Nearest organelle wins; colliders that don't belong to an organelle (AR planes, etc.) are skipped.
+        OrganelleTarget best = null;
+        float bestDistance = float.MaxValue;
+        for (int i = 0; i < count; i++)
         {
-            OrganelleTarget target = hit.collider.GetComponentInParent<OrganelleTarget>();
-            if (target != null)
-            {
-                SelectOrganelle(target);
-                return;
-            }
+            if (HitBuffer[i].distance >= bestDistance) continue;
+            OrganelleTarget t = HitBuffer[i].collider.GetComponentInParent<OrganelleTarget>();
+            if (t == null) continue;
+            best = t;
+            bestDistance = HitBuffer[i].distance;
         }
 
-        // Deselect when tapping off an organelle
+        if (best != null)
+        {
+            Select(best);
+            return true;
+        }
+
         ClearSelection();
+        return false;
     }
 
-    private void SelectOrganelle(OrganelleTarget target)
+    public void Select(OrganelleTarget target)
     {
-        if (_currentSelection != null)
-            _currentSelection.SetSelected(false);
+        if (target == null) { ClearSelection(); return; }
+        if (target == Current) return;
 
-        _currentSelection = target;
-        _currentSelection.SetSelected(true);
+        if (Current != null) Current.SetSelected(false);
+
+        Current = target;
+        Current.SetSelected(true);
         OnOrganelleSelected?.Invoke(target);
     }
 
     public void ClearSelection()
     {
-        if (_currentSelection != null)
-        {
-            _currentSelection.SetSelected(false);
-            _currentSelection = null;
-            OnSelectionCleared?.Invoke();
-        }
+        if (Current == null) return;
+
+        Current.SetSelected(false);
+        Current = null;
+        OnSelectionCleared?.Invoke();
     }
 }

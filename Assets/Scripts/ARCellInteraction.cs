@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.XR.ARFoundation;
 using UnityEngine.XR.ARSubsystems;
 using UnityEngine.InputSystem;
@@ -14,10 +15,6 @@ public class ARCellInteraction : MonoBehaviour
     [SerializeField] private ARRaycastManager raycastManager;
     [SerializeField] private ARPlaneManager planeManager;
     [SerializeField] private Camera arCamera;
-
-    [Header("Selection Settings")]
-    [Tooltip("Assign the Layer used by Organelle colliders. If set to Nothing, raycasts will test all layers except Ignore Raycast.")]
-    [SerializeField] private LayerMask organelleLayerMask = ~0;
 
     [Header("Scale Boundaries (Meters)")]
     [SerializeField] private float initialScale = 0.1f;
@@ -34,7 +31,7 @@ public class ARCellInteraction : MonoBehaviour
     private bool isDragging = false;
     private Vector2 touchStartPos;
     private const float TapMovementThreshold = 15f; // Screen pixels threshold to distinguish tap from drag
-    private OrganelleTarget currentSelection;
+    private bool suppressTap = false; // True when the gesture was a spawn, pinch/rotate or key-rotate, not a tap
 
     private void Awake()
     {
@@ -69,11 +66,13 @@ public class ARCellInteraction : MonoBehaviour
             {
                 touchStartPos = touch.screenPosition;
                 isDragging = false;
+                suppressTap = false;
 
-                // Initial cell placement
+                // Initial cell placement (this touch only places the cell, it is not a selection tap)
                 if (spawnedObject == null)
                 {
                     PlaceOrMove(touch.screenPosition, isInitialSpawn: true);
+                    suppressTap = true;
                 }
             }
             else if (touch.phase == TouchPhase.Moved && spawnedObject != null)
@@ -92,11 +91,12 @@ public class ARCellInteraction : MonoBehaviour
             else if (touch.phase == TouchPhase.Ended)
             {
                 // If the gesture never exceeded the threshold, treat it as a stationary Tap
-                if (!isDragging && spawnedObject != null)
+                if (!isDragging && !suppressTap && spawnedObject != null)
                 {
-                    HandleScreenTap(touch.screenPosition);
+                    HandleScreenTap(touch.screenPosition, touch.touchId);
                 }
                 isDragging = false;
+                suppressTap = false;
             }
         }
         // --- MOBILE 2-FINGER TOUCH: PINCH & ROTATE ---
@@ -104,6 +104,7 @@ public class ARCellInteraction : MonoBehaviour
         {
             var touch0 = activeTouches[0];
             var touch1 = activeTouches[1];
+            suppressTap = true; // Fingers lifting after a pinch/twist must not count as a tap
 
             Vector2 prevPos0 = touch0.screenPosition - touch0.delta;
             Vector2 prevPos1 = touch1.screenPosition - touch1.delta;
@@ -135,6 +136,7 @@ public class ARCellInteraction : MonoBehaviour
             // 1. ROTATE: Hold 'R' + Left-Click Drag OR Middle-Mouse Drag
             if (spawnedObject != null && (isMiddleMouseDragging || (isRotateKeyPressed && Mouse.current.leftButton.isPressed)))
             {
+                suppressTap = true;
                 float rotationSpeed = 0.4f;
                 spawnedObject.transform.Rotate(Vector3.up, -mouseDelta.x * rotationSpeed, Space.World);
             }
@@ -143,10 +145,12 @@ public class ARCellInteraction : MonoBehaviour
             {
                 touchStartPos = mousePos;
                 isDragging = false;
+                suppressTap = false;
 
                 if (spawnedObject == null)
                 {
                     PlaceOrMove(mousePos, isInitialSpawn: true);
+                    suppressTap = true;
                 }
             }
             else if (Mouse.current.leftButton.isPressed && spawnedObject != null)
@@ -163,11 +167,12 @@ public class ARCellInteraction : MonoBehaviour
             }
             else if (Mouse.current.leftButton.wasReleasedThisFrame)
             {
-                if (!isDragging && spawnedObject != null)
+                if (!isDragging && !suppressTap && spawnedObject != null)
                 {
-                    HandleScreenTap(mousePos);
+                    HandleScreenTap(mousePos, -1);
                 }
                 isDragging = false;
+                suppressTap = false;
             }
 
             // 3. ZOOM: Mouse Scroll Wheel
@@ -180,43 +185,14 @@ public class ARCellInteraction : MonoBehaviour
         }
     }
 
-    private void HandleScreenTap(Vector2 screenPosition)
+    private void HandleScreenTap(Vector2 screenPosition, int pointerId)
     {
-        if (arCamera == null) return;
+        // Taps on UI (e.g. an info panel) shouldn't change the selection.
+        if (EventSystem.current != null && EventSystem.current.IsPointerOverGameObject(pointerId))
+            return;
 
-        Ray ray = arCamera.ScreenPointToRay(screenPosition);
-        if (Physics.Raycast(ray, out RaycastHit hit, 100f, organelleLayerMask))
-        {
-            OrganelleTarget target = hit.collider.GetComponentInParent<OrganelleTarget>();
-            if (target != null)
-            {
-                SelectOrganelle(target);
-                return;
-            }
-        }
-
-        // Tapping empty space or outside an organelle clears selection
-        ClearSelection();
-    }
-
-    private void SelectOrganelle(OrganelleTarget target)
-    {
-        if (currentSelection != null)
-            currentSelection.SetSelected(false);
-
-        currentSelection = target;
-        currentSelection.SetSelected(true);
-        Debug.Log($"[AR Interaction] Selected organelle: {target.OrganelleName}");
-    }
-
-    private void ClearSelection()
-    {
-        if (currentSelection != null)
-        {
-            currentSelection.SetSelected(false);
-            currentSelection = null;
-            Debug.Log("[AR Interaction] Cleared organelle selection.");
-        }
+        // Selects the organelle under the tap; tapping empty space clears the selection.
+        OrganelleSelectionManager.Instance.TrySelectAtScreenPoint(screenPosition, arCamera);
     }
 
     private void PlaceOrMove(Vector2 screenPosition, bool isInitialSpawn)
@@ -230,6 +206,10 @@ public class ARCellInteraction : MonoBehaviour
             {
                 spawnedObject = Instantiate(cellPrefab, targetPos, hitPose.rotation);
                 spawnedObject.transform.localScale = Vector3.one * initialScale;
+
+                // Make the organelles tappable (adds OrganelleTargets + colliders to the spawned cell).
+                if (spawnedObject.GetComponent<CellOrganelleSetup>() == null)
+                    spawnedObject.AddComponent<CellOrganelleSetup>();
             }
             else
             {
