@@ -13,6 +13,11 @@ public class ARCellInteraction : MonoBehaviour
     [SerializeField] private GameObject cellPrefab;
     [SerializeField] private ARRaycastManager raycastManager;
     [SerializeField] private ARPlaneManager planeManager;
+    [SerializeField] private Camera arCamera;
+
+    [Header("Selection Settings")]
+    [Tooltip("Assign the Layer used by Organelle colliders. If set to Nothing, raycasts will test all layers except Ignore Raycast.")]
+    [SerializeField] private LayerMask organelleLayerMask = ~0;
 
     [Header("Scale Boundaries (Meters)")]
     [SerializeField] private float initialScale = 0.1f;
@@ -24,7 +29,12 @@ public class ARCellInteraction : MonoBehaviour
 
     private GameObject spawnedObject;
     private static readonly List<ARRaycastHit> hits = new List<ARRaycastHit>();
+
+    // Drag vs. Tap tracking
     private bool isDragging = false;
+    private Vector2 touchStartPos;
+    private const float TapMovementThreshold = 15f; // Screen pixels threshold to distinguish tap from drag
+    private OrganelleTarget currentSelection;
 
     private void Awake()
     {
@@ -32,6 +42,8 @@ public class ARCellInteraction : MonoBehaviour
             raycastManager = GetComponent<ARRaycastManager>();
         if (planeManager == null)
             planeManager = GetComponent<ARPlaneManager>();
+        if (arCamera == null)
+            arCamera = Camera.main;
     }
 
     private void OnEnable()
@@ -53,13 +65,38 @@ public class ARCellInteraction : MonoBehaviour
         {
             var touch = activeTouches[0];
 
-            if (touch.phase == TouchPhase.Began && spawnedObject == null)
+            if (touch.phase == TouchPhase.Began)
             {
-                PlaceOrMove(touch.screenPosition, isInitialSpawn: true);
+                touchStartPos = touch.screenPosition;
+                isDragging = false;
+
+                // Initial cell placement
+                if (spawnedObject == null)
+                {
+                    PlaceOrMove(touch.screenPosition, isInitialSpawn: true);
+                }
             }
             else if (touch.phase == TouchPhase.Moved && spawnedObject != null)
             {
-                PlaceOrMove(touch.screenPosition, isInitialSpawn: false);
+                // Only begin dragging if finger has moved beyond the tap threshold
+                if (!isDragging && (touch.screenPosition - touchStartPos).magnitude > TapMovementThreshold)
+                {
+                    isDragging = true;
+                }
+
+                if (isDragging)
+                {
+                    PlaceOrMove(touch.screenPosition, isInitialSpawn: false);
+                }
+            }
+            else if (touch.phase == TouchPhase.Ended)
+            {
+                // If the gesture never exceeded the threshold, treat it as a stationary Tap
+                if (!isDragging && spawnedObject != null)
+                {
+                    HandleScreenTap(touch.screenPosition);
+                }
+                isDragging = false;
             }
         }
         // --- MOBILE 2-FINGER TOUCH: PINCH & ROTATE ---
@@ -101,24 +138,35 @@ public class ARCellInteraction : MonoBehaviour
                 float rotationSpeed = 0.4f;
                 spawnedObject.transform.Rotate(Vector3.up, -mouseDelta.x * rotationSpeed, Space.World);
             }
-            // 2. REPOSITION / SPAWN: Normal Left-Click Drag
+            // 2. REPOSITION / SPAWN / TAP: Left-Click
             else if (Mouse.current.leftButton.wasPressedThisFrame)
             {
+                touchStartPos = mousePos;
+                isDragging = false;
+
                 if (spawnedObject == null)
                 {
                     PlaceOrMove(mousePos, isInitialSpawn: true);
                 }
-                else
+            }
+            else if (Mouse.current.leftButton.isPressed && spawnedObject != null)
+            {
+                if (!isDragging && (mousePos - touchStartPos).magnitude > TapMovementThreshold)
                 {
                     isDragging = true;
                 }
-            }
-            else if (Mouse.current.leftButton.isPressed && isDragging && spawnedObject != null)
-            {
-                PlaceOrMove(mousePos, isInitialSpawn: false);
+
+                if (isDragging)
+                {
+                    PlaceOrMove(mousePos, isInitialSpawn: false);
+                }
             }
             else if (Mouse.current.leftButton.wasReleasedThisFrame)
             {
+                if (!isDragging && spawnedObject != null)
+                {
+                    HandleScreenTap(mousePos);
+                }
                 isDragging = false;
             }
 
@@ -129,6 +177,45 @@ public class ARCellInteraction : MonoBehaviour
                 float newScale = Mathf.Clamp(spawnedObject.transform.localScale.x + (scroll * 0.0005f), minScale, maxScale);
                 spawnedObject.transform.localScale = Vector3.one * newScale;
             }
+        }
+    }
+
+    private void HandleScreenTap(Vector2 screenPosition)
+    {
+        if (arCamera == null) return;
+
+        Ray ray = arCamera.ScreenPointToRay(screenPosition);
+        if (Physics.Raycast(ray, out RaycastHit hit, 100f, organelleLayerMask))
+        {
+            OrganelleTarget target = hit.collider.GetComponentInParent<OrganelleTarget>();
+            if (target != null)
+            {
+                SelectOrganelle(target);
+                return;
+            }
+        }
+
+        // Tapping empty space or outside an organelle clears selection
+        ClearSelection();
+    }
+
+    private void SelectOrganelle(OrganelleTarget target)
+    {
+        if (currentSelection != null)
+            currentSelection.SetSelected(false);
+
+        currentSelection = target;
+        currentSelection.SetSelected(true);
+        Debug.Log($"[AR Interaction] Selected organelle: {target.OrganelleName}");
+    }
+
+    private void ClearSelection()
+    {
+        if (currentSelection != null)
+        {
+            currentSelection.SetSelected(false);
+            currentSelection = null;
+            Debug.Log("[AR Interaction] Cleared organelle selection.");
         }
     }
 

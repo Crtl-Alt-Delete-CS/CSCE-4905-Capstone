@@ -101,7 +101,7 @@ GameObject:
   - component: {fileID: 4913141882515500}
   - component: {fileID: 33683842302360390}
   - component: {fileID: 23707441361552944}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: BubbleGolgi_08
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -281,7 +281,7 @@ GameObject:
   - component: {fileID: 4242068883186328}
   - component: {fileID: 33188058570099774}
   - component: {fileID: 23672419027201048}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: MitochondrionInnerMembrane_00
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -371,7 +371,7 @@ GameObject:
   - component: {fileID: 4214019164129692}
   - component: {fileID: 33256553735384382}
   - component: {fileID: 23259062946645942}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Centriole_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -819,7 +819,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4589748361029620}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Mitochondrion_00
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -944,7 +944,7 @@ GameObject:
   - component: {fileID: 4658291244366928}
   - component: {fileID: 33061177689355584}
   - component: {fileID: 23787492218153978}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: MitochondrionInnerMembrane_00
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1122,7 +1122,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4475488988555046}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Mitochondrion_06
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1157,7 +1157,7 @@ GameObject:
   - component: {fileID: 4423069415871530}
   - component: {fileID: 33119959055615934}
   - component: {fileID: 23055821065007242}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: MitochondrionOuterMembrane_00
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1517,7 +1517,7 @@ GameObject:
   - component: {fileID: 4061772652059446}
   - component: {fileID: 33992679274468246}
   - component: {fileID: 23138287555086532}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: MitochondrionOuterMembrane_00
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1607,7 +1607,7 @@ GameObject:
   - component: {fileID: 4607015355119294}
   - component: {fileID: 33921385194803878}
   - component: {fileID: 23630369829696854}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: BubbleGolgi_03
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1787,7 +1787,7 @@ GameObject:
   - component: {fileID: 4914177976758194}
   - component: {fileID: 33424000265979690}
   - component: {fileID: 23135638799375460}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: MitochondrionOuterMembrane_00
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2145,7 +2145,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4497217757719002}
-  m_Layer: 0
+  - component: {fileID: 2604460939662529319}
+  m_Layer: 7
   m_Name: BubbleGolgi
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2179,6 +2180,28 @@ Transform:
   - {fileID: 4467857804930362}
   m_Father: {fileID: 4160036950370334}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!64 &2604460939662529319
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1080710193831658}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 4300000, guid: 37a7007450d8472478e8aaff976dcad5, type: 3}
 --- !u!1 &1081411996964958
 GameObject:
   m_ObjectHideFlags: 0
@@ -2280,7 +2303,7 @@ GameObject:
   - component: {fileID: 4155879803566330}
   - component: {fileID: 33863279165136578}
   - component: {fileID: 23000935029728284}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: MitochondrionOuterMembrane_00
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3000,7 +3023,7 @@ GameObject:
   - component: {fileID: 4082848313541928}
   - component: {fileID: 33200840205399262}
   - component: {fileID: 23062006006788802}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: MitochondrionOuterMembrane_00
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3540,7 +3563,7 @@ GameObject:
   - component: {fileID: 4024974432134174}
   - component: {fileID: 33964008299076588}
   - component: {fileID: 23563912353965802}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: MitochondrionInnerMembrane_00
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4800,7 +4823,7 @@ GameObject:
   - component: {fileID: 4771111641658088}
   - component: {fileID: 33464755076832320}
   - component: {fileID: 23609500545017380}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: MitochondrionOuterMembrane_00
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -6238,7 +6261,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4371197134279184}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Mitochondrion_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -6273,7 +6296,7 @@ GameObject:
   - component: {fileID: 4456590140966580}
   - component: {fileID: 33438291717475322}
   - component: {fileID: 23084443577727972}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: MitochondrionOuterMembrane_00
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -6543,7 +6566,7 @@ GameObject:
   - component: {fileID: 4631511165086564}
   - component: {fileID: 33578438524532778}
   - component: {fileID: 23026178302442458}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: BubbleGolgi_10
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -6631,7 +6654,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4504290164605636}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Mitochondrion_11
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -7294,7 +7317,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4183806131837996}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Mitochondrion_05
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -8049,7 +8072,7 @@ GameObject:
   - component: {fileID: 4143675160943106}
   - component: {fileID: 33096665938538134}
   - component: {fileID: 23689281666974632}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: MitochondrionInnerMembrane_00
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -8767,7 +8790,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4307377470049964}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Mitochondrion_04
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -9252,7 +9275,7 @@ GameObject:
   - component: {fileID: 4978563943026286}
   - component: {fileID: 33791001369362214}
   - component: {fileID: 23597157455339184}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: MitochondrionInnerMembrane_00
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -9342,7 +9365,7 @@ GameObject:
   - component: {fileID: 4470632687129806}
   - component: {fileID: 33077886795495620}
   - component: {fileID: 23399513683463926}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: MitochondrionInnerMembrane_00
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -10152,7 +10175,7 @@ GameObject:
   - component: {fileID: 4293113209764246}
   - component: {fileID: 33963376544298868}
   - component: {fileID: 23654781307861224}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: MitochondrionInnerMembrane_00
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -10510,6 +10533,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4296297555621336}
+  - component: {fileID: 9050817719781071578}
   m_Layer: 0
   m_Name: Lysosome
   m_TagString: Untagged
@@ -10552,6 +10576,28 @@ Transform:
   - {fileID: 4126683883320828}
   m_Father: {fileID: 4160036950370334}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!64 &9050817719781071578
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1341768824583678}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 0}
 --- !u!1 &1343468670825716
 GameObject:
   m_ObjectHideFlags: 0
@@ -11373,7 +11419,7 @@ GameObject:
   - component: {fileID: 4995592643870640}
   - component: {fileID: 33420322463406506}
   - component: {fileID: 23903988571280836}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: BubbleGolgi_06
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -12271,7 +12317,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4764502127328604}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Mitochondrion_02
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -12756,7 +12802,7 @@ GameObject:
   - component: {fileID: 4189523981965706}
   - component: {fileID: 33861543721777612}
   - component: {fileID: 23999282471989122}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: MitochondrionOuterMembrane_00
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -12846,7 +12892,7 @@ GameObject:
   - component: {fileID: 4825655799156948}
   - component: {fileID: 33361378174409228}
   - component: {fileID: 23139516688248600}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: MitochondrionInnerMembrane_00
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -13114,7 +13160,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4991867118256550}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Mitochondrion_08
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -13327,7 +13373,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4034039020871608}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Mitochondrion_12
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -13362,7 +13408,7 @@ GameObject:
   - component: {fileID: 4641439053726306}
   - component: {fileID: 33985837719721680}
   - component: {fileID: 23858838021379958}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: BubbleGolgi_05
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -13452,7 +13498,7 @@ GameObject:
   - component: {fileID: 4216508232925382}
   - component: {fileID: 33664934250253676}
   - component: {fileID: 23628720917422312}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: MitochondrionInnerMembrane_00
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -13540,7 +13586,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4768414143659686}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: MitochondrionSlice
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -15360,7 +15406,7 @@ GameObject:
   - component: {fileID: 4872463505568560}
   - component: {fileID: 33178702167953726}
   - component: {fileID: 23674264706412356}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: MitochondrionInnerMembrane_00
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -15540,7 +15586,7 @@ GameObject:
   - component: {fileID: 4573804559126312}
   - component: {fileID: 33842975139411964}
   - component: {fileID: 23288556121865778}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: MitochondrionOuterMembrane_00
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -15630,7 +15676,7 @@ GameObject:
   - component: {fileID: 4299532198582860}
   - component: {fileID: 33659683853945184}
   - component: {fileID: 23831439204520068}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: MitochondrionOuterMembrane_00
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -15718,7 +15764,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4193272063160584}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Mitochondrion_07
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -15931,7 +15977,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4146979998083458}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Mitochondrion_09
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -16234,6 +16280,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4405080746343154}
+  - component: {fileID: 1944417741011037614}
   m_Layer: 0
   m_Name: IncorporationOf
   m_TagString: Untagged
@@ -16280,6 +16327,28 @@ Transform:
   - {fileID: 4088171758052392}
   m_Father: {fileID: 4160036950370334}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!64 &1944417741011037614
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1621317258178118}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 0}
 --- !u!1 &1622854422278772
 GameObject:
   m_ObjectHideFlags: 0
@@ -16381,7 +16450,7 @@ GameObject:
   - component: {fileID: 4973913344863426}
   - component: {fileID: 33714485102343680}
   - component: {fileID: 23751006787253724}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: BubbleGolgi_07
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -17011,7 +17080,7 @@ GameObject:
   - component: {fileID: 4180534295534378}
   - component: {fileID: 33226261296466434}
   - component: {fileID: 23735322066685144}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: MitochondrionOuterMembrane_00
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -17191,7 +17260,7 @@ GameObject:
   - component: {fileID: 4814678634528242}
   - component: {fileID: 33447110210722422}
   - component: {fileID: 23761717515695830}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: MitochondrionOuterMembrane_00
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -17281,7 +17350,7 @@ GameObject:
   - component: {fileID: 4445344522515884}
   - component: {fileID: 33555623866396378}
   - component: {fileID: 23212870334164756}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: MitochondrionSliceOuterMembrane
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -17371,7 +17440,7 @@ GameObject:
   - component: {fileID: 4409462800340502}
   - component: {fileID: 33057910129710048}
   - component: {fileID: 23942328408665416}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: BubbleGolgi_01
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -17729,6 +17798,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4100270870257590}
+  - component: {fileID: 2849436340758632675}
   m_Layer: 0
   m_Name: Reticulum
   m_TagString: Untagged
@@ -17755,6 +17825,28 @@ Transform:
   - {fileID: 4121373107905482}
   m_Father: {fileID: 4160036950370334}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!64 &2849436340758632675
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1689968159606202}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 0}
 --- !u!1 &1691630739875368
 GameObject:
   m_ObjectHideFlags: 0
@@ -18396,7 +18488,7 @@ GameObject:
   - component: {fileID: 4904097566500504}
   - component: {fileID: 33741809856503812}
   - component: {fileID: 23288437523097400}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: BubbleGolgi_09
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -18576,7 +18668,7 @@ GameObject:
   - component: {fileID: 4648950875470986}
   - component: {fileID: 33963436623708790}
   - component: {fileID: 23758292656746572}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: BubbleGolgi_00
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -19566,7 +19658,7 @@ GameObject:
   - component: {fileID: 4824959651669468}
   - component: {fileID: 33707010661932714}
   - component: {fileID: 23326564156901914}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: MitochondrionSliceInnerMembrane
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -19654,6 +19746,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4426577192330344}
+  - component: {fileID: 6791740965739840168}
   m_Layer: 0
   m_Name: Cytoplasm
   m_TagString: Untagged
@@ -19687,6 +19780,28 @@ Transform:
   - {fileID: 4053814468133242}
   m_Father: {fileID: 4160036950370334}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!64 &6791740965739840168
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1754299659551806}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 0}
 --- !u!1 &1770890308775742
 GameObject:
   m_ObjectHideFlags: 0
@@ -20058,7 +20173,7 @@ GameObject:
   - component: {fileID: 4137194493218012}
   - component: {fileID: 33155509643255882}
   - component: {fileID: 23355207916907452}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: MitochondrionOuterMembrane_00
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -20416,6 +20531,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4991559865616034}
+  - component: {fileID: 9191907672603293745}
   m_Layer: 0
   m_Name: Nucleus
   m_TagString: Untagged
@@ -20444,6 +20560,28 @@ Transform:
   - {fileID: 4993581673236110}
   m_Father: {fileID: 4160036950370334}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!64 &9191907672603293745
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1793347927239012}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 0}
 --- !u!1 &1794066940604428
 GameObject:
   m_ObjectHideFlags: 0
@@ -21085,7 +21223,7 @@ GameObject:
   - component: {fileID: 4238541648855416}
   - component: {fileID: 33399496428871608}
   - component: {fileID: 23051142839380874}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Centriole_00
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -21173,7 +21311,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4090757438049284}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Mitochondrion_10
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -21658,7 +21796,7 @@ GameObject:
   - component: {fileID: 4467857804930362}
   - component: {fileID: 33953306641093696}
   - component: {fileID: 23779203449115278}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: BubbleGolgi_11
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -21836,6 +21974,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4121500511266734}
+  - component: {fileID: 4311446500557604740}
   m_Layer: 0
   m_Name: Ribosome
   m_TagString: Untagged
@@ -22015,6 +22154,28 @@ Transform:
   - {fileID: 4325169495223444}
   m_Father: {fileID: 4160036950370334}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!64 &4311446500557604740
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1863018046600810}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 0}
 --- !u!1 &1865706652128094
 GameObject:
   m_ObjectHideFlags: 0
@@ -22296,7 +22457,7 @@ GameObject:
   - component: {fileID: 4239572686223836}
   - component: {fileID: 33677468343116662}
   - component: {fileID: 23470532652132042}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: MitochondrionInnerMembrane_00
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -22476,7 +22637,7 @@ GameObject:
   - component: {fileID: 4260657043966294}
   - component: {fileID: 33559541776130436}
   - component: {fileID: 23930410771629486}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: BubbleGolgi_02
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -22654,7 +22815,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4740818404609724}
-  m_Layer: 0
+  - component: {fileID: 1103136538660110284}
+  m_Layer: 7
   m_Name: Mitochondrion
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -22690,6 +22852,28 @@ Transform:
   - {fileID: 4034039020871608}
   m_Father: {fileID: 4160036950370334}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!64 &1103136538660110284
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1891823611459204}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 4300494, guid: 1a5d1b95dbfbd4a4c92f8cc04044831c, type: 3}
 --- !u!1 &1895614795446008
 GameObject:
   m_ObjectHideFlags: 0
@@ -23061,7 +23245,7 @@ GameObject:
   - component: {fileID: 4111818986651556}
   - component: {fileID: 33204053616585366}
   - component: {fileID: 23680014169453292}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: MitochondrionInnerMembrane_00
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -23151,7 +23335,7 @@ GameObject:
   - component: {fileID: 4916782030375654}
   - component: {fileID: 33659886731568574}
   - component: {fileID: 23236395593610634}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: BubbleGolgi_04
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -23869,7 +24053,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4201964550002574}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Mitochondrion_03
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -24082,7 +24266,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4888941233345496}
-  m_Layer: 0
+  - component: {fileID: 7709227510598045500}
+  m_Layer: 7
   m_Name: Centriole
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -24106,6 +24291,28 @@ Transform:
   - {fileID: 4214019164129692}
   m_Father: {fileID: 4160036950370334}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!64 &7709227510598045500
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1950799390443212}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 5
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 4300028, guid: 1a5d1b95dbfbd4a4c92f8cc04044831c, type: 3}
 --- !u!1 &1953916411392650
 GameObject:
   m_ObjectHideFlags: 0
@@ -24657,7 +24864,7 @@ GameObject:
   - component: {fileID: 4016892236840316}
   - component: {fileID: 33332203687354402}
   - component: {fileID: 23941154658304572}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: MitochondrionInnerMembrane_00
   m_TagString: Untagged
   m_Icon: {fileID: 0}
