@@ -1,27 +1,21 @@
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.XR.ARFoundation;
-using UnityEngine.XR.ARSubsystems;
-using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.UI;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 public class ARPlacementManager : MonoBehaviour
 {
-    [SerializeField] private GameObject cellPrefab;
     [SerializeField] private ARRaycastManager raycastManager;
     [SerializeField] private ARPlaneManager planeManager;
     [SerializeField] private ARSession arSession;
     [SerializeField] private ARCameraManager arCameraManager;
     
-    private GameObject spawnedObject;
     private GameObject homeScreen;
     private GameObject arControls;
     private Text arStatusLabel;
     private string currentARStatus;
     private bool arExperienceActive;
-    private static readonly List<ARRaycastHit> hits = new List<ARRaycastHit>();
 
     private void Awake()
     {
@@ -50,19 +44,6 @@ public class ARPlacementManager : MonoBehaviour
             return;
 
         UpdateARStatus();
-
-        // Check for primary touch/click using the New Input System
-        if (Touchscreen.current != null && Touchscreen.current.primaryTouch.press.wasPressedThisFrame)
-        {
-            Vector2 touchPosition = Touchscreen.current.primaryTouch.position.ReadValue();
-            TryPlaceObject(touchPosition);
-        }
-        else if (Mouse.current != null && Mouse.current.leftButton.wasPressedThisFrame)
-        {
-            // Fallback for Unity editor / simulator testing
-            Vector2 mousePosition = Mouse.current.position.ReadValue();
-            TryPlaceObject(mousePosition);
-        }
     }
 
     private void EnsureEventSystem()
@@ -235,21 +216,4 @@ public class ARPlacementManager : MonoBehaviour
             arControls.SetActive(active);
     }
 
-    private void TryPlaceObject(Vector2 screenPosition)
-    {
-        if (raycastManager.Raycast(screenPosition, hits, TrackableType.PlaneWithinPolygon))
-        {
-            Pose hitPose = hits[0].pose;
-
-            if (spawnedObject == null)
-            {
-                spawnedObject = Instantiate(cellPrefab, hitPose.position, hitPose.rotation);
-            }
-            else
-            {
-                // Reposition if already placed
-                spawnedObject.transform.SetPositionAndRotation(hitPose.position, hitPose.rotation);
-            }
-        }
-    }
 }

@@ -619,6 +619,7 @@ GameObject:
   - component: {fileID: 2100060281}
   - component: {fileID: 2100060280}
   - component: {fileID: 2100060285}
+  - component: {fileID: 2100060286}
   m_Layer: 0
   m_Name: XR Origin
   m_TagString: Untagged
@@ -707,10 +708,28 @@ MonoBehaviour:
   cellPrefab: {fileID: 1559809634498624, guid: 99e0bb4ccaf7e674492a5a05a402db9d, type: 3}
   raycastManager: {fileID: 0}
   planeManager: {fileID: 0}
+  arCamera: {fileID: 0}
   initialScale: 0.5
   minScale: 0.3
   maxScale: 1
   verticalOffset: 0.2
+--- !u!114 &2100060286
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2100060279}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8205247a22066574ab5b20d331c193a7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ARPlacementManager
+  cellPrefab: {fileID: 0}
+  raycastManager: {fileID: 0}
+  planeManager: {fileID: 0}
+  arSession: {fileID: 0}
+  arCameraManager: {fileID: 0}
 --- !u!1 &2107972443
 GameObject:
   m_ObjectHideFlags: 0
