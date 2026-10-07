@@ -618,7 +618,7 @@ GameObject:
   - component: {fileID: 2100060282}
   - component: {fileID: 2100060281}
   - component: {fileID: 2100060280}
-  - component: {fileID: 2100060284}
+  - component: {fileID: 2100060285}
   m_Layer: 0
   m_Name: XR Origin
   m_TagString: Untagged
@@ -658,7 +658,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_PlanePrefab: {fileID: 2875575718636544539, guid: 44e87250a7fd7dd4b87ff499022b97fc, type: 3}
-  m_DetectionMode: -1
+  m_DetectionMode: 1
 --- !u!114 &2100060282
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -692,7 +692,7 @@ Transform:
   - {fileID: 1471831857}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &2100060284
+--- !u!114 &2100060285
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -701,12 +701,16 @@ MonoBehaviour:
   m_GameObject: {fileID: 2100060279}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8205247a22066574ab5b20d331c193a7, type: 3}
+  m_Script: {fileID: 11500000, guid: bd4b1b6d2937ad04898da3e138ec10ec, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ARPlacementManager
+  m_EditorClassIdentifier: Assembly-CSharp::ARCellInteraction
   cellPrefab: {fileID: 1559809634498624, guid: 99e0bb4ccaf7e674492a5a05a402db9d, type: 3}
   raycastManager: {fileID: 0}
   planeManager: {fileID: 0}
+  initialScale: 0.5
+  minScale: 0.3
+  maxScale: 1
+  verticalOffset: 0.2
 --- !u!1 &2107972443
 GameObject:
   m_ObjectHideFlags: 0
