@@ -179,7 +179,7 @@ public class ARCellInteraction : MonoBehaviour
             float scroll = Mouse.current.scroll.ReadValue().y;
             if (scroll != 0 && spawnedObject != null)
             {
-                float newScale = Mathf.Clamp(spawnedObject.transform.localScale.x + (scroll * 0.0005f), minScale, maxScale);
+                float newScale = Mathf.Clamp(spawnedObject.transform.localScale.x + (scroll * 0.005f), minScale, maxScale);
                 spawnedObject.transform.localScale = Vector3.one * newScale;
             }
         }
