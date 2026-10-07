@@ -18,6 +18,8 @@ public class ARPlacementManager : MonoBehaviour
     private GameObject spawnedObject;
     private GameObject homeScreen;
     private GameObject arControls;
+    private Text arStatusLabel;
+    private string currentARStatus;
     private bool arExperienceActive;
     private static readonly List<ARRaycastHit> hits = new List<ARRaycastHit>();
 
@@ -46,6 +48,8 @@ public class ARPlacementManager : MonoBehaviour
     {
         if (!arExperienceActive)
             return;
+
+        UpdateARStatus();
 
         // Check for primary touch/click using the New Input System
         if (Touchscreen.current != null && Touchscreen.current.primaryTouch.press.wasPressedThisFrame)
@@ -105,7 +109,7 @@ public class ARPlacementManager : MonoBehaviour
 
         CreateButton(arControls.transform, "HOME", new Vector2(0.06f, 0.91f), new Vector2(0.34f, 0.97f),
             new Color(0.035f, 0.12f, 0.105f, 0.88f), Color.white, ReturnHome);
-        AddLabel(arControls.transform, "Tap a detected surface to place the cell", 30, FontStyle.Normal, Color.white,
+        arStatusLabel = AddLabel(arControls.transform, "Starting AR...", 30, FontStyle.Normal, Color.white,
             new Vector2(0.1f, 0.04f), new Vector2(0.9f, 0.1f), TextAnchor.MiddleCenter);
     }
 
@@ -122,7 +126,7 @@ public class ARPlacementManager : MonoBehaviour
         return panel;
     }
 
-    private void AddLabel(Transform parent, string text, int fontSize, FontStyle style, Color color,
+    private Text AddLabel(Transform parent, string text, int fontSize, FontStyle style, Color color,
         Vector2 anchorMin, Vector2 anchorMax, TextAnchor alignment)
     {
         GameObject labelObject = new GameObject("Label", typeof(RectTransform), typeof(Text));
@@ -143,6 +147,44 @@ public class ARPlacementManager : MonoBehaviour
         label.horizontalOverflow = HorizontalWrapMode.Wrap;
         label.verticalOverflow = VerticalWrapMode.Truncate;
         label.raycastTarget = false;
+        return label;
+    }
+
+    private void UpdateARStatus()
+    {
+        string status;
+        if (arSession == null)
+        {
+            status = "AR Session is missing from the scene.";
+        }
+        else
+        {
+            switch (ARSession.state)
+            {
+                case ARSessionState.SessionTracking:
+                    status = "Move phone slowly to scan a surface.";
+                    break;
+                case ARSessionState.SessionInitializing:
+                    status = "Starting camera and tracking...";
+                    break;
+                case ARSessionState.NeedsInstall:
+                case ARSessionState.Installing:
+                    status = "Install Google Play Services for AR.";
+                    break;
+                case ARSessionState.Unsupported:
+                    status = "ARCore is not supported on this device.";
+                    break;
+                default:
+                    status = "Checking AR availability...";
+                    break;
+            }
+        }
+
+        if (status != currentARStatus)
+        {
+            currentARStatus = status;
+            arStatusLabel.text = status;
+        }
     }
 
     private void CreateButton(Transform parent, string label, Vector2 anchorMin, Vector2 anchorMax,
