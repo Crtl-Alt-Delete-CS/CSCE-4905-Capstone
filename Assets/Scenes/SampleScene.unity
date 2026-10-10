@@ -619,6 +619,7 @@ GameObject:
   - component: {fileID: 2100060281}
   - component: {fileID: 2100060280}
   - component: {fileID: 2100060285}
+  - component: {fileID: 2100060286}
   m_Layer: 0
   m_Name: XR Origin
   m_TagString: Untagged
@@ -712,6 +713,24 @@ MonoBehaviour:
   minScale: 0.3
   maxScale: 6
   verticalOffset: 0.7
+--- !u!114 &2100060286
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2100060279}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4dea56a9eaadd1c439095de4f9a371cb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.XR.ARFoundation::UnityEngine.XR.ARFoundation.ARTrackedImageManager
+  <trackablesChanged>k__BackingField:
+    m_PersistentCalls:
+      m_Calls: []
+  m_SerializedLibrary: {fileID: 11400000, guid: 91ce37179caf5064d81e37e90604c2fc, type: 2}
+  m_MaxNumberOfMovingImages: 1
+  m_TrackedImagePrefab: {fileID: 1559809634498624, guid: 99e0bb4ccaf7e674492a5a05a402db9d, type: 3}
 --- !u!1 &2107972443
 GameObject:
   m_ObjectHideFlags: 0

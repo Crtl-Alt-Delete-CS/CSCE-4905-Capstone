@@ -16,4 +16,14 @@ MonoBehaviour:
   m_GuidHigh: 14835680022392975501
   m_DataStore:
     m_Storage: []
-  m_Images: []
+  m_Images:
+  - m_SerializedGuid:
+      m_GuidLow: 5542810999652622257
+      m_GuidHigh: 6492821105848924549
+    m_SerializedTextureGuid:
+      m_GuidLow: 3306776569448466141
+      m_GuidHigh: 12128963834211797913
+    m_Size: {x: 0.13, y: 0.13}
+    m_SpecifySize: 1
+    m_Name: AnimalCell
+    m_Texture: {fileID: 0}
