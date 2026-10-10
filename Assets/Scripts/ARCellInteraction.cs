@@ -22,7 +22,7 @@ public class ARCellInteraction : MonoBehaviour
     [SerializeField] private float maxScale = 0.5f;
 
     [Header("Elevation Offset")]
-    [SerializeField] private float verticalOffset = 0.0f;
+    [SerializeField] private float verticalOffset = 0.02f;
 
     private GameObject spawnedObject;
     private static readonly List<ARRaycastHit> hits = new List<ARRaycastHit>();
