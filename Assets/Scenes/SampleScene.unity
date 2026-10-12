@@ -148,7 +148,7 @@ Light:
   serializedVersion: 13
   m_Type: 1
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_Intensity: 2
+  m_Intensity: 1
   m_Range: 10
   m_SpotAngle: 30
   m_InnerSpotAngle: 21.80208
@@ -657,7 +657,7 @@ MonoBehaviour:
   <trackablesChanged>k__BackingField:
     m_PersistentCalls:
       m_Calls: []
-  m_PlanePrefab: {fileID: 2875575718636544539, guid: 44e87250a7fd7dd4b87ff499022b97fc, type: 3}
+  m_PlanePrefab: {fileID: 996326047883851658, guid: 1cf95156150396b479b0b1af2c55429c, type: 3}
   m_DetectionMode: 1
 --- !u!114 &2100060282
 MonoBehaviour:
@@ -707,10 +707,11 @@ MonoBehaviour:
   cellPrefab: {fileID: 1559809634498624, guid: 99e0bb4ccaf7e674492a5a05a402db9d, type: 3}
   raycastManager: {fileID: 0}
   planeManager: {fileID: 0}
-  initialScale: 0.5
+  arCamera: {fileID: 0}
+  initialScale: 2
   minScale: 0.3
-  maxScale: 1
-  verticalOffset: 0.2
+  maxScale: 6
+  verticalOffset: 0.7
 --- !u!1 &2107972443
 GameObject:
   m_ObjectHideFlags: 0
