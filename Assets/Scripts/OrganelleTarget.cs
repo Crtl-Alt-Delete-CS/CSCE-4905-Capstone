@@ -7,7 +7,6 @@ using UnityEngine;
 public class OrganelleTarget : MonoBehaviour
 {
     [SerializeField] private string organelleName = "Organelle";
-    [TextArea] public string description;
 
     [Header("Highlight")]
     [SerializeField] private Color highlightColor = new Color(1f, 0.85f, 0.1f);
@@ -15,6 +14,8 @@ public class OrganelleTarget : MonoBehaviour
 
     public string OrganelleName => organelleName;
     public bool IsSelected { get; private set; }
+    public string[] Pages { get; private set; }
+    public string description => (Pages != null && Pages.Length > 0) ? Pages[0] : string.Empty;
 
     private static readonly int EmissionColorId = Shader.PropertyToID("_EmissionColor");
 
@@ -22,10 +23,10 @@ public class OrganelleTarget : MonoBehaviour
     private Material[][] _originalMaterials;
     private Material[][] _highlightMaterials;
 
-    public void Initialize(string displayName, string info)
+    public void Initialize(string displayName, string[] pages)
     {
         organelleName = displayName;
-        description = info;
+        Pages = pages;
     }
 
     public void SetSelected(bool selected)

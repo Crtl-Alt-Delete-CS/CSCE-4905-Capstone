@@ -1,6 +1,8 @@
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
+using Unity.InferenceEngine.Tokenization.PostProcessors.Templating;
 using UnityEngine;
+using static UnityEngine.EventSystems.EventTrigger;
 
 /// <summary>
 /// Makes the organelles of a cell prefab tappable. Added automatically by ARCellInteraction
@@ -23,20 +25,49 @@ public class CellOrganelleSetup : MonoBehaviour
     // Groups whose children together form ONE organelle (nucleus = envelope + pores + nucleolus).
     private static readonly HashSet<string> WholeGroup = new HashSet<string> { "Nucleus", "Reticulum" };
 
-    private static readonly Dictionary<string, (string name, string info)> Info = new Dictionary<string, (string, string)>
+    private static readonly Dictionary<string, (string name, string[] pages)> Info = new Dictionary<string, (string, string[])>
     {
-        { "Nucleus",         ("Nucleus", "Stores the cell's DNA and controls gene expression. It is enclosed by a double nuclear envelope with pores.") },
-        { "Mitochondrion",   ("Mitochondrion", "Produces most of the cell's ATP through cellular respiration.") },
-        { "Ribosome",        ("Ribosome", "Builds proteins by reading messenger RNA.") },
-        { "Lysosome",        ("Lysosome", "Holds digestive enzymes that break down waste and worn-out cell parts.") },
-        { "GolgiApparatus",  ("Golgi apparatus", "Modifies, sorts and packages proteins and lipids for delivery.") },
-        { "BubbleGolgi",     ("Golgi vesicle", "A small vesicle that carries cargo to and from the Golgi apparatus.") },
-        { "Reticulum",       ("Endoplasmic reticulum", "Rough ER (with ribosomes) makes proteins; smooth ER makes lipids.") },
-        { "Centriole",       ("Centriole", "Helps organise microtubules during cell division.") },
-        { "Chloroplast",     ("Chloroplast", "Carries out photosynthesis, turning light into chemical energy.") },
-        { "Leukoplast",      ("Leukoplast", "A colourless plastid that stores starch, oils or proteins.") },
-        { "CentralVacuole",  ("Central vacuole", "Stores water and nutrients and maintains turgor pressure.") },
-        { "IncorporationOf", ("Cell inclusion", "A storage granule or inclusion held in the cytoplasm.") },
+        { "Nucleus",         ("Nucleus", new string[] {
+            "Stores the cell's DNA and controls cellular activity.",
+            "Enclosed by a double nuclear envelope containing pores for material exchange.",
+            "Contains the nucleolus, the site where ribosomes are assembled."
+        } ) },
+        { "Mitochondrion",   ("Mitochondrion", new string[] {
+            "(pronounced my-toe-KON-dree-uhn) \nJust like a phone needs a battery to run, an animal cell needs power to survive. That power comes from a tiny organelle called the mitochondria. Because of this, scientists often call it the \"powerhouse\" of the cell!",
+            "What Do They Do? \nWhen you eat a meal, your stomach breaks the food down into tiny pieces. However, your body's cells can't use those pieces for energy right away. \nThat is where the mitochondria step in. They take those tiny pieces of food, mix them with the oxygen you breathe in, and turn them into a special type of \"cell energy.\" Without this energy, your cells wouldn't be able to do their jobs.",
+            "What Do They Look Like? \nIf you were to look at an animal cell under a very powerful microscope, the mitochondria look a bit like little jelly beans or peanuts floating around. \nInside that jelly-bean shape is a folded membrane that zig-zags back and forth. This folded zig-zag pattern is really important because it gives the mitochondria a lot more room to build and store energy.",
+            "Fun Fact: The harder a cell has to work, the more mitochondria it needs. A skin cell doesn't move much, so it only has a few. But your heart and muscle cells are constantly working and moving, so a single muscle cell can have thousands of mitochondria inside it!"
+        } ) },
+        { "Ribosome",        ("Ribosome", new string[] {
+            "Builds proteins by reading messenger RNA.", 
+        } ) },
+        { "Lysosome",        ("Lysosome", new string[] {
+            "Holds digestive enzymes that break down waste and worn-out cell parts.", 
+        } ) },
+        { "GolgiApparatus",  ("Golgi apparatus", new string[] {
+            "Modifies, sorts and packages proteins and lipids for delivery.", 
+        } ) },
+        { "BubbleGolgi",     ("Golgi vesicle", new string[] {
+            "A small vesicle that carries cargo to and from the Golgi apparatus.", 
+        } ) },
+        { "Reticulum",       ("Endoplasmic reticulum", new string[] {
+            "Rough ER (with ribosomes) makes proteins; smooth ER makes lipids.", 
+        } ) },
+        { "Centriole",       ("Centriole", new string[] {
+            "Helps organise microtubules during cell division.", 
+        } ) },
+        { "Chloroplast",     ("Chloroplast", new string[] {
+            "Carries out photosynthesis, turning light into chemical energy.", 
+        } ) },
+        { "Leukoplast",      ("Leukoplast", new string[] {
+            "A colourless plastid that stores starch, oils or proteins.", 
+        } ) },
+        { "CentralVacuole",  ("Central vacuole", new string[] {
+            "Stores water and nutrients and maintains turgor pressure.", 
+        } ) },
+        { "IncorporationOf", ("Cell inclusion", new string[] {
+            "A storage granule or inclusion held in the cytoplasm.", 
+        } ) },
     };
 
     private void Awake()
@@ -75,9 +106,9 @@ public class CellOrganelleSetup : MonoBehaviour
         if (target == null) target = go.AddComponent<OrganelleTarget>();
 
         if (Info.TryGetValue(key, out var entry))
-            target.Initialize(entry.name, entry.info);
+            target.Initialize(entry.name, entry.pages);
         else
-            target.Initialize(Humanize(key), string.Empty);
+            target.Initialize(Humanize(key), new string[] {"No description avaiable."});
 
         foreach (Renderer r in go.GetComponentsInChildren<Renderer>(true))
             EnsureCollider(r);
