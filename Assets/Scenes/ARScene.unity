@@ -1977,6 +1977,7 @@ GameObject:
   - component: {fileID: 2100060285}
   - component: {fileID: 2100060286}
   - component: {fileID: 2100060287}
+  - component: {fileID: 2100060288}
   m_Layer: 0
   m_Name: XR Origin
   m_TagString: Untagged
@@ -2015,7 +2016,7 @@ MonoBehaviour:
   <trackablesChanged>k__BackingField:
     m_PersistentCalls:
       m_Calls: []
-  m_PlanePrefab: {fileID: 996326047883851658, guid: 1cf95156150396b479b0b1af2c55429c, type: 3}
+  m_PlanePrefab: {fileID: 1585201990951412, guid: a6b7ca1d53c75490595d1f0d5f43be38, type: 3}
   m_DetectionMode: 1
 --- !u!114 &2100060282
 MonoBehaviour:
@@ -2104,6 +2105,24 @@ MonoBehaviour:
     m_Bits: 4294967295
   maxDistance: 100
   infoUI: {fileID: 1676498180}
+--- !u!114 &2100060288
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2100060279}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4dea56a9eaadd1c439095de4f9a371cb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.XR.ARFoundation::UnityEngine.XR.ARFoundation.ARTrackedImageManager
+  <trackablesChanged>k__BackingField:
+    m_PersistentCalls:
+      m_Calls: []
+  m_SerializedLibrary: {fileID: 11400000, guid: 6f1ba6b5872334a4584c9fbcd92fa3e1, type: 2}
+  m_MaxNumberOfMovingImages: 4
+  m_TrackedImagePrefab: {fileID: 2765825772377283199, guid: 4eac01a6869fbbd44af13cb4ce56ba4f, type: 3}
 --- !u!1 &2105888177
 GameObject:
   m_ObjectHideFlags: 0
