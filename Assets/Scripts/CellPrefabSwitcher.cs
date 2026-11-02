@@ -35,16 +35,16 @@ public class CellPrefabSwitcher : MonoBehaviour
 
         switch (imageName)
         {
-            case "AnimalCell":
+            case "qr_Animal":
                 if (animalCell) animalCell.SetActive(true);
                 break;
-            case "BacterialCell":
+            case "qr_Bacterial":
                 if (bacterialCell) bacterialCell.SetActive(true);
                 break;
-            case "FungalCell":
+            case "qr_Fungal":
                 if (fungalCell) fungalCell.SetActive(true);
                 break;
-            case "PlantCell":
+            case "qr_Plant":
                 if (plantCell) plantCell.SetActive(true);
                 break;
         }
