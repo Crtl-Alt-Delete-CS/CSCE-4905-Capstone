@@ -25,7 +25,7 @@ MonoBehaviour:
       m_GuidHigh: 14900061485101884424
     m_Size: {x: 0.04, y: 0.04}
     m_SpecifySize: 1
-    m_Name: AnimalCell
+    m_Name: qr_Animal
     m_Texture: {fileID: 0}
   - m_SerializedGuid:
       m_GuidLow: 5036284052498129967
@@ -35,7 +35,7 @@ MonoBehaviour:
       m_GuidHigh: 10286656434546707754
     m_Size: {x: 0.04, y: 0.04}
     m_SpecifySize: 1
-    m_Name: BacterialCell
+    m_Name: qr_Bacterial
     m_Texture: {fileID: 0}
   - m_SerializedGuid:
       m_GuidLow: 5469792351665742604
@@ -45,7 +45,7 @@ MonoBehaviour:
       m_GuidHigh: 1168036815261585386
     m_Size: {x: 0.04, y: 0.04}
     m_SpecifySize: 1
-    m_Name: FungalCell
+    m_Name: qr_Fungal
     m_Texture: {fileID: 0}
   - m_SerializedGuid:
       m_GuidLow: 5223852612354876756
@@ -55,5 +55,5 @@ MonoBehaviour:
       m_GuidHigh: 1624494462646857403
     m_Size: {x: 0.04, y: 0.04}
     m_SpecifySize: 1
-    m_Name: PlantCell
+    m_Name: qr_Plant
     m_Texture: {fileID: 0}

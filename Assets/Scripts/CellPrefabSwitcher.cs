@@ -1,52 +1,46 @@
 using UnityEngine;
 using UnityEngine.XR.ARFoundation;
+using UnityEngine.XR.ARSubsystems;
 
 [RequireComponent(typeof(ARTrackedImage))]
 public class CellPrefabSwitcher : MonoBehaviour
 {
-    [Header("Cell Child Objects")]
-    [SerializeField] private GameObject animalCell;
-    [SerializeField] private GameObject bacterialCell;
-    [SerializeField] private GameObject fungalCell;
-    [SerializeField] private GameObject plantCell;
+    [SerializeField] GameObject animalCell;
+    [SerializeField] GameObject bacterialCell;
+    [SerializeField] GameObject fungalCell;
+    [SerializeField] GameObject plantCell;
 
-    private ARTrackedImage trackedImage;
+    ARTrackedImage trackedImage;
+    GameObject active;
 
-    private void Awake()
+    void Awake() => trackedImage = GetComponent<ARTrackedImage>();
+
+    void OnEnable() => Refresh();
+
+    void Update()
     {
-        trackedImage = GetComponent<ARTrackedImage>();
+        // referenceImage can be populated after spawn, so keep it in sync
+        if (active == null) Refresh();
+        if (active != null)
+            active.SetActive(trackedImage.trackingState == TrackingState.Tracking);
     }
 
-    private void Start()
+    void Refresh()
     {
-        UpdateVisibleCell();
-    }
+        string n = trackedImage.referenceImage.name;
+        if (string.IsNullOrEmpty(n)) return;
+        n = n.ToLowerInvariant();
 
-    public void UpdateVisibleCell()
-    {
-        // Hide all models first
-        if (animalCell) animalCell.SetActive(false);
-        if (bacterialCell) bacterialCell.SetActive(false);
-        if (fungalCell) fungalCell.SetActive(false);
-        if (plantCell) plantCell.SetActive(false);
+        foreach (var c in new[] { animalCell, bacterialCell, fungalCell, plantCell })
+            if (c) c.SetActive(false);
 
-        // Match detected image name from Reference Image Library
-        string imageName = trackedImage.referenceImage.name;
+        active = n.Contains("animal")    ? animalCell
+               : n.Contains("bacterial") ? bacterialCell
+               : n.Contains("fungal")    ? fungalCell
+               : n.Contains("plant")     ? plantCell
+               : null;
 
-        switch (imageName)
-        {
-            case "qr_Animal":
-                if (animalCell) animalCell.SetActive(true);
-                break;
-            case "qr_Bacterial":
-                if (bacterialCell) bacterialCell.SetActive(true);
-                break;
-            case "qr_Fungal":
-                if (fungalCell) fungalCell.SetActive(true);
-                break;
-            case "qr_Plant":
-                if (plantCell) plantCell.SetActive(true);
-                break;
-        }
+        if (active == null)
+            Debug.LogWarning($"No cell mapped for image '{trackedImage.referenceImage.name}'");
     }
 }
