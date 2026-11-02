@@ -69,7 +69,7 @@ public class ARCellInteraction : MonoBehaviour
                 suppressTap = false;
 
                 // Initial cell placement (this touch only places the cell, it is not a selection tap)
-                if (spawnedObject == null)
+                if (spawnedObject == null && !IsOverUI(touch.touchId))
                 {
                     PlaceOrMove(touch.screenPosition, isInitialSpawn: true);
                     suppressTap = true;
@@ -147,7 +147,7 @@ public class ARCellInteraction : MonoBehaviour
                 isDragging = false;
                 suppressTap = false;
 
-                if (spawnedObject == null)
+                if (spawnedObject == null && !IsOverUI(-1))
                 {
                     PlaceOrMove(mousePos, isInitialSpawn: true);
                     suppressTap = true;
@@ -183,6 +183,29 @@ public class ARCellInteraction : MonoBehaviour
                 spawnedObject.transform.localScale = Vector3.one * newScale;
             }
         }
+    }
+
+    private static bool IsOverUI(int pointerId)
+    {
+        return EventSystem.current != null && EventSystem.current.IsPointerOverGameObject(pointerId);
+    }
+
+    /// <summary>
+    /// Destroys the tap-placed cell (if any) and resets gesture state.
+    /// Called by ARPlacementManager when switching away from plane placement.
+    /// </summary>
+    public void ClearSpawned()
+    {
+        if (spawnedObject != null)
+        {
+            // Deselect before the organelles are destroyed so the info panel closes cleanly.
+            OrganelleSelectionManager.Instance.ClearSelection();
+            Destroy(spawnedObject);
+        }
+
+        spawnedObject = null;
+        isDragging = false;
+        suppressTap = false;
     }
 
     private void HandleScreenTap(Vector2 screenPosition, int pointerId)

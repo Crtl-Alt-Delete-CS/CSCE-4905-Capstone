@@ -2067,8 +2067,8 @@ MonoBehaviour:
   raycastManager: {fileID: 0}
   planeManager: {fileID: 0}
   arCamera: {fileID: 0}
-  initialScale: 2
-  minScale: 0.3
+  initialScale: 1
+  minScale: 0.2
   maxScale: 6
   verticalOffset: 0.7
 --- !u!114 &2100060286
@@ -2083,6 +2083,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8205247a22066574ab5b20d331c193a7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ARPlacementManager
+  startMode: 0
+  imageManager: {fileID: 0}
+  cellInteraction: {fileID: 0}
   raycastManager: {fileID: 0}
   planeManager: {fileID: 0}
   arSession: {fileID: 0}
