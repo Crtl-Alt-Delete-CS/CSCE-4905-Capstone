@@ -23,10 +23,13 @@ public class CellPrefabSwitcher : MonoBehaviour
     private bool diagLogged;
 
     private static bool warnedAboutAssets;
+    private ARCellInteraction cellInteraction;
 
     private void Awake()
     {
         trackedImage = GetComponent<ARTrackedImage>();
+        
+        cellInteraction = FindFirstObjectByType<ARCellInteraction>(); 
 
         animalCell    = ResolveChild(animalCell,    "AnimalCell");
         bacterialCell = ResolveChild(bacterialCell, "BacterialCell");
@@ -132,7 +135,17 @@ public class CellPrefabSwitcher : MonoBehaviour
         else if (n.Contains("plant"))     activeCell = plantCell;
 
         if (activeCell != null)
-            Debug.Log($"CellPrefabSwitcher: image '{imageName}' (trackable {trackedImage.trackableId}) -> showing '{activeCell.name}'", this);
+        {
+            Debug.Log($"CellPrefabSwitcher: image '{imageName}'... showing '{activeCell.name}'", this);
+
+            // Generate colliders for the organelles
+            if (activeCell.GetComponent<CellOrganelleSetup>() == null)
+                activeCell.AddComponent<CellOrganelleSetup>();
+
+            // Pass the cell to the interaction manager to enable tapping/zooming
+            if (cellInteraction != null)
+                cellInteraction.SetSpawnedObject(activeCell);
+        }
 
         if (activeCell == null && !warnedUnmapped)
         {

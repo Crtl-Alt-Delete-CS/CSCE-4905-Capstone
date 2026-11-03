@@ -109,7 +109,7 @@ public class ARPlacementManager : MonoBehaviour
 
         CreateButton(arControls.transform, "HOME", new Vector2(0.06f, 0.91f), new Vector2(0.34f, 0.97f),
             new Color(0.035f, 0.12f, 0.105f, 0.88f), Color.white, ReturnHome);
-        CreateButton(arControls.transform, "MODE", new Vector2(0.66f, 0.91f), new Vector2(0.94f, 0.97f),
+        CreateButton(arControls.transform, "MODE", new Vector2(0.36f, 0.91f), new Vector2(0.64f, 0.97f),
             new Color(0.035f, 0.12f, 0.105f, 0.88f), Color.white, ToggleMode);
         arStatusLabel = AddLabel(arControls.transform, "Starting AR...", 30, FontStyle.Normal, Color.white,
             new Vector2(0.1f, 0.04f), new Vector2(0.9f, 0.1f), TextAnchor.MiddleCenter);
@@ -265,7 +265,8 @@ public class ARPlacementManager : MonoBehaviour
         {
             if (!planes)
                 cellInteraction.ClearSpawned();   // remove the tap-placed cell
-            cellInteraction.enabled = planes;     // stop click-to-spawn
+            
+            cellInteraction.enabled = true;       // Keep enabled so taps and zooms process
         }
     }
 

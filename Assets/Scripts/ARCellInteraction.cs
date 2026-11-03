@@ -33,6 +33,16 @@ public class ARCellInteraction : MonoBehaviour
     private const float TapMovementThreshold = 15f; // Screen pixels threshold to distinguish tap from drag
     private bool suppressTap = false; // True when the gesture was a spawn, pinch/rotate or key-rotate, not a tap
 
+    // --- NEW: Flag to prevent dragging QR-spawned cells ---
+    public bool isTrackedImage = false;
+
+    // --- NEW: Method to allow external scripts to set the active cell ---
+    public void SetSpawnedObject(GameObject obj)
+    {
+        spawnedObject = obj;
+        isTrackedImage = (obj != null);
+    }
+
     private void Awake()
     {
         if (raycastManager == null)
@@ -83,7 +93,8 @@ public class ARCellInteraction : MonoBehaviour
                     isDragging = true;
                 }
 
-                if (isDragging)
+                // --- MODIFIED: Prevent dragging if it's a QR-spawned cell ---
+                if (isDragging && !isTrackedImage)
                 {
                     PlaceOrMove(touch.screenPosition, isInitialSpawn: false);
                 }
@@ -160,7 +171,8 @@ public class ARCellInteraction : MonoBehaviour
                     isDragging = true;
                 }
 
-                if (isDragging)
+                // --- MODIFIED: Prevent dragging if it's a QR-spawned cell, using mousePos ---
+                if (isDragging && !isTrackedImage)
                 {
                     PlaceOrMove(mousePos, isInitialSpawn: false);
                 }
