@@ -7,12 +7,12 @@ using static UnityEngine.EventSystems.EventTrigger;
 
 public class OrganelleInfoUI : MonoBehaviour
 {
-    [Serializable]
-    public  class OrganelleAudio
-    {
-        public string organelleName;
-        public AudioClip[] pageAudioClips;
-    }
+    //[Serializable]
+    ////public  class OrganelleAudio
+    ////{
+    ////    public string organelleName;
+    ////    public AudioClip[] pageAudioClips;
+    ////}
 
     [Header("Panel Root")]
     public GameObject panelRoot;
@@ -28,7 +28,7 @@ public class OrganelleInfoUI : MonoBehaviour
 
     [Header("Audio")]
     public AudioSource audioSource;
-    public OrganelleAudio[] audioLibrary;
+    //public OrganelleAudio[] audioLibrary;
 
     // Internal data storage for the currently active organelle
     private string[] currentPages;
@@ -53,25 +53,26 @@ public class OrganelleInfoUI : MonoBehaviour
         
     }
 
-    public void DisplayOrganelle(string organelleName, string[] pages)
+    public void DisplayOrganelle(OrganelleData data)
     {
         if (panelRoot != null)
             panelRoot.SetActive(true);
 
-        organelleTitle.text = organelleName;
-        currentPages = pages;
+        organelleTitle.text = data.organelleName;
+        currentPages = data.pages;
+        currentAudioClips = data.pageAudioClips;
         currentPageIndex = 0;
 
-        currentAudioClips = null;
-        if (audioLibrary != null)
-        {
-            OrganelleAudio entry = Array.Find(audioLibrary, a =>
-                a != null && !string.IsNullOrEmpty(a.organelleName) &&
-                a.organelleName.Trim().Equals(organelleName.Trim(), StringComparison.OrdinalIgnoreCase));
+        //currentAudioClips = null;
+        //if (audioLibrary != null)
+        //{
+        //    OrganelleAudio entry = Array.Find(audioLibrary, a =>
+        //        a != null && !string.IsNullOrEmpty(a.organelleName) &&
+        //        a.organelleName.Trim().Equals(organelleName.Trim(), StringComparison.OrdinalIgnoreCase));
 
-            if (entry != null)
-                currentAudioClips = entry.pageAudioClips;
-        }
+        //    if (entry != null)
+        //        currentAudioClips = entry.pageAudioClips;
+        //}
         
 
         UpdatePageDisplay();
@@ -101,15 +102,8 @@ public class OrganelleInfoUI : MonoBehaviour
 
     private void OnSoundClicked()
     {
-        if (audioSource == null)
-        {
+        if (audioSource == null || currentAudioClips == null || currentAudioClips.Length == 0)
             return;
-        }
-
-        if (currentAudioClips == null || currentAudioClips.Length == 0)
-        {
-            return;
-        }
 
         if (currentPageIndex < currentAudioClips.Length && currentAudioClips[currentPageIndex] != null)
         {
@@ -128,7 +122,7 @@ public class OrganelleInfoUI : MonoBehaviour
         }
         else
         {
-            organelleDescription.text = "";
+            organelleDescription.text = "No description available";
         }
     }
 

@@ -13607,7 +13607,6 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 4824959651669468}
-  - {fileID: 4445344522515884}
   m_Father: {fileID: 4740818404609724}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1524495641376252
@@ -17365,12 +17364,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1657386379185076}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0, y: 0, z: 0}
+  m_LocalRotation: {x: -0, y: -0, z: 3.7892324e-15, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 4768414143659686}
+  m_Father: {fileID: 4824959651669468}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &33555623866396378
 MeshFilter:
@@ -19677,7 +19676,8 @@ Transform:
   m_LocalPosition: {x: -0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 4445344522515884}
   m_Father: {fileID: 4768414143659686}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &33707010661932714
@@ -20547,8 +20547,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1793347927239012}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.00000052603355, y: -0.47988454, z: -0.0000003097336, w: 0.8773317}
-  m_LocalPosition: {x: 0.33106923, y: 0.051877756, z: -0.13002098}
+  m_LocalRotation: {x: -0.0000005364418, y: -0.4798845, z: -0.0000003091991, w: 0.8773317}
+  m_LocalPosition: {x: 0.33106923, y: 0.051877752, z: -0.13002098}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -22816,6 +22816,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4740818404609724}
   - component: {fileID: 1103136538660110284}
+  - component: {fileID: 6149355071627599270}
   m_Layer: 7
   m_Name: Mitochondrion
   m_TagString: Untagged
@@ -22874,6 +22875,29 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: 4300494, guid: 1a5d1b95dbfbd4a4c92f8cc04044831c, type: 3}
+--- !u!114 &6149355071627599270
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1891823611459204}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a07957c9f93775845a1d82728a668f72, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::OrganelleData
+  organelleName: Mitochondrion
+  pages:
+  - (pronounced my-toe-KON-dree-uhn) Just like a phone needs a battery to run, an animal cell needs power to survive. That power comes from a tiny organelle called the mitochondria. Because of this, scientists often call it the "powerhouse" of the cell!
+  - What Do They Do? When you eat a meal, your stomach breaks the food down into tiny pieces. However, your body's cells can't use those pieces for energy right away. That is where the mitochondria step in. They take those tiny pieces of food, mix them with the oxygen you breathe in, and turn them into a special type of "cell energy", without this energy, your cells wouldn't be able to do their jobs.
+  - What Do They Look Like? If you were to look at an animal cell under a very powerful microscope, the mitochondria look a bit like little jelly beans or peanuts floating around. Inside that jelly-bean shape is a folded membrane that zig-zags back and forth. This folded zig-zag pattern is really important because it gives the mitochondria a lot more room to build and store energy.
+  - 'Fun Fact: The harder a cell has to work, the more mitochondria it needs. A skin cell doesn''t move much, so it only has a few. But your heart and muscle cells are constantly working and moving, so a single muscle cell can have thousands of mitochondria inside it!'
+  pageAudioClips:
+  - {fileID: 8300000, guid: 2cfb56c4a7964994d803101678cb01f8, type: 3}
+  - {fileID: 8300000, guid: 837353fded0abd648a0986e828d6c4ac, type: 3}
+  - {fileID: 8300000, guid: c474db4fc49f9d945a6d1b5488aaeeeb, type: 3}
+  - {fileID: 8300000, guid: 62e2f5e9f4c78374eb4346ce997a1b5d, type: 3}
 --- !u!1 &1895614795446008
 GameObject:
   m_ObjectHideFlags: 0

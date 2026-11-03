@@ -94,8 +94,21 @@ public class OrganelleSelectionManager : MonoBehaviour
 
         if (infoUI != null)
         {
-            infoUI.DisplayOrganelle(target.OrganelleName, target.Pages);
+            // READ COMPONENT: get the data directly off the clicked 3D model
+            OrganelleData data = target.GetComponentInParent<OrganelleData>();
+
+            if (data != null)
+            { 
+                infoUI.DisplayOrganelle(data);
+            }
+            else
+            {
+                Debug.LogWarning($"OrganelleData script is missing on {target.gameObject.name}");
+            }
+
         }
+        
+
     }
 
     public void ClearSelection()
