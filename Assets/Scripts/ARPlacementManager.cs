@@ -11,7 +11,7 @@ public class ARPlacementManager : MonoBehaviour
     [SerializeField] private ARSession arSession;
     [SerializeField] private ARCameraManager arCameraManager;
     
-    private GameObject homeScreen;
+    private HomeLoadingUI homeUI;
     private GameObject arControls;
     private Text arStatusLabel;
     private string currentARStatus;
@@ -61,24 +61,12 @@ public class ARPlacementManager : MonoBehaviour
         GameObject canvasObject = new GameObject("Mobile UI", typeof(Canvas), typeof(CanvasScaler), typeof(GraphicRaycaster));
         Canvas canvas = canvasObject.GetComponent<Canvas>();
         canvas.renderMode = RenderMode.ScreenSpaceOverlay;
-        canvas.sortingOrder = 10;
+        canvas.sortingOrder = 11;
 
         CanvasScaler scaler = canvasObject.GetComponent<CanvasScaler>();
         scaler.uiScaleMode = CanvasScaler.ScaleMode.ScaleWithScreenSize;
         scaler.referenceResolution = new Vector2(1080, 1920);
         scaler.matchWidthOrHeight = 0.5f;
-
-        homeScreen = CreatePanel("Home Screen", canvas.transform, new Color(0.035f, 0.12f, 0.105f, 1f));
-        AddLabel(homeScreen.transform, "AR CELL EXPLORER", 34, FontStyle.Bold, new Color(0.62f, 0.94f, 0.72f, 1f),
-            new Vector2(0.08f, 0.73f), new Vector2(0.92f, 0.81f), TextAnchor.MiddleCenter);
-        AddLabel(homeScreen.transform, "Explore the\nworld of cells", 88, FontStyle.Bold, Color.white,
-            new Vector2(0.08f, 0.49f), new Vector2(0.92f, 0.72f), TextAnchor.MiddleCenter);
-        AddLabel(homeScreen.transform, "Place a 3D cell in your space with augmented reality.", 36, FontStyle.Normal,
-            new Color(0.79f, 0.88f, 0.83f, 1f), new Vector2(0.13f, 0.39f), new Vector2(0.87f, 0.48f), TextAnchor.MiddleCenter);
-        CreateButton(homeScreen.transform, "START AR", new Vector2(0.12f, 0.2f), new Vector2(0.88f, 0.29f),
-            new Color(0.58f, 0.91f, 0.65f, 1f), new Color(0.035f, 0.12f, 0.105f, 1f), EnterAR);
-        AddLabel(homeScreen.transform, "A camera and motion permission may be required.", 26, FontStyle.Normal,
-            new Color(0.65f, 0.76f, 0.7f, 1f), new Vector2(0.08f, 0.09f), new Vector2(0.92f, 0.15f), TextAnchor.MiddleCenter);
 
         arControls = new GameObject("AR Controls", typeof(RectTransform));
         arControls.transform.SetParent(canvas.transform, false);
@@ -92,19 +80,9 @@ public class ARPlacementManager : MonoBehaviour
             new Color(0.035f, 0.12f, 0.105f, 0.88f), Color.white, ReturnHome);
         arStatusLabel = AddLabel(arControls.transform, "Starting AR...", 30, FontStyle.Normal, Color.white,
             new Vector2(0.1f, 0.04f), new Vector2(0.9f, 0.1f), TextAnchor.MiddleCenter);
-    }
 
-    private GameObject CreatePanel(string name, Transform parent, Color color)
-    {
-        GameObject panel = new GameObject(name, typeof(RectTransform), typeof(Image));
-        panel.transform.SetParent(parent, false);
-        RectTransform rect = panel.GetComponent<RectTransform>();
-        rect.anchorMin = Vector2.zero;
-        rect.anchorMax = Vector2.one;
-        rect.offsetMin = Vector2.zero;
-        rect.offsetMax = Vector2.zero;
-        panel.GetComponent<Image>().color = color;
-        return panel;
+        homeUI = gameObject.AddComponent<HomeLoadingUI>();
+        homeUI.Initialize(EnterAR);
     }
 
     private Text AddLabel(Transform parent, string text, int fontSize, FontStyle style, Color color,
@@ -210,8 +188,8 @@ public class ARPlacementManager : MonoBehaviour
             planeManager.enabled = active;
         if (raycastManager != null)
             raycastManager.enabled = active;
-        if (homeScreen != null)
-            homeScreen.SetActive(!active);
+        if (homeUI != null)
+            homeUI.SetVisible(!active);
         if (arControls != null)
             arControls.SetActive(active);
     }

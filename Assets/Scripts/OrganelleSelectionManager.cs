@@ -14,7 +14,6 @@ public class OrganelleSelectionManager : MonoBehaviour
     [SerializeField] private Camera arCamera;
     [SerializeField] private LayerMask selectableLayers = ~0;
     [SerializeField] private float maxDistance = 100f;
-    [SerializeField] private OrganelleInfoUI infoUI;
 
     private static OrganelleSelectionManager _instance;
     private static readonly RaycastHit[] HitBuffer = new RaycastHit[64];
@@ -91,11 +90,6 @@ public class OrganelleSelectionManager : MonoBehaviour
         Current = target;
         Current.SetSelected(true);
         OnOrganelleSelected?.Invoke(target);
-
-        if (infoUI != null)
-        {
-            infoUI.DisplayOrganelle(target.OrganelleName, target.Pages);
-        }
     }
 
     public void ClearSelection()
@@ -105,10 +99,5 @@ public class OrganelleSelectionManager : MonoBehaviour
         Current.SetSelected(false);
         Current = null;
         OnSelectionCleared?.Invoke();
-
-        if (infoUI != null)
-        {
-            infoUI.HidePanel();
-        }
     }
 }
