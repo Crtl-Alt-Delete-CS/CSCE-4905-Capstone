@@ -6,6 +6,15 @@ using UnityEngine.UI;
 
 public class ARPlacementManager : MonoBehaviour
 {
+    // Only ONE of these is active at a time so cells never spawn from both systems at once.
+    public enum ARMode { ImageTracking, PlanePlacement }
+
+    [Header("Mode")]
+    [SerializeField] private ARMode startMode = ARMode.ImageTracking;
+
+    [Header("AR References (auto-found if left empty)")]
+    [SerializeField] private ARTrackedImageManager imageManager;
+    [SerializeField] private ARCellInteraction cellInteraction;
     [SerializeField] private ARRaycastManager raycastManager;
     [SerializeField] private ARPlaneManager planeManager;
     [SerializeField] private ARSession arSession;
@@ -16,6 +25,7 @@ public class ARPlacementManager : MonoBehaviour
     private Text arStatusLabel;
     private string currentARStatus;
     private bool arExperienceActive;
+    private ARMode mode;
 
     private void Awake()
     {
@@ -27,7 +37,16 @@ public class ARPlacementManager : MonoBehaviour
             arSession = FindFirstObjectByType<ARSession>();
         if (arCameraManager == null)
             arCameraManager = FindFirstObjectByType<ARCameraManager>();
+        if (imageManager == null)
+            imageManager = GetComponent<ARTrackedImageManager>();
+        if (imageManager == null)
+            imageManager = FindFirstObjectByType<ARTrackedImageManager>();
+        if (cellInteraction == null)
+            cellInteraction = GetComponent<ARCellInteraction>();
+        if (cellInteraction == null)
+            cellInteraction = FindFirstObjectByType<ARCellInteraction>();
 
+        mode = startMode;
         SetARExperienceActive(false);
     }
 
@@ -90,6 +109,8 @@ public class ARPlacementManager : MonoBehaviour
 
         CreateButton(arControls.transform, "HOME", new Vector2(0.06f, 0.91f), new Vector2(0.34f, 0.97f),
             new Color(0.035f, 0.12f, 0.105f, 0.88f), Color.white, ReturnHome);
+        CreateButton(arControls.transform, "MODE", new Vector2(0.36f, 0.91f), new Vector2(0.64f, 0.97f),
+            new Color(0.035f, 0.12f, 0.105f, 0.88f), Color.white, ToggleMode);
         arStatusLabel = AddLabel(arControls.transform, "Starting AR...", 30, FontStyle.Normal, Color.white,
             new Vector2(0.1f, 0.04f), new Vector2(0.9f, 0.1f), TextAnchor.MiddleCenter);
     }
@@ -143,7 +164,9 @@ public class ARPlacementManager : MonoBehaviour
             switch (ARSession.state)
             {
                 case ARSessionState.SessionTracking:
-                    status = "Move phone slowly to scan a surface.";
+                    status = mode == ARMode.ImageTracking
+                        ? "Point the camera at a cell QR code."
+                        : "Move phone slowly to scan a surface.";
                     break;
                 case ARSessionState.SessionInitializing:
                     status = "Starting camera and tracking...";
@@ -199,6 +222,54 @@ public class ARPlacementManager : MonoBehaviour
         SetARExperienceActive(false);
     }
 
+    private void ToggleMode()
+    {
+        mode = mode == ARMode.ImageTracking ? ARMode.PlanePlacement : ARMode.ImageTracking;
+        ApplyMode();
+
+        // Force the status text to refresh for the new mode.
+        currentARStatus = null;
+    }
+
+    /// <summary>
+    /// Turns exactly one spawn system on. Image tracking (QR codes) and plane placement
+    /// (tap/click to place) are never enabled together.
+    /// </summary>
+    private void ApplyMode()
+    {
+        bool images = arExperienceActive && mode == ARMode.ImageTracking;
+        bool planes = arExperienceActive && mode == ARMode.PlanePlacement;
+
+        // Disabling a trackable manager only stops detection; it does NOT hide the objects it
+        // already spawned. So show/hide the existing trackables explicitly as well.
+        if (imageManager != null)
+        {
+            imageManager.enabled = images;
+            foreach (var trackedImage in imageManager.trackables)
+                if (trackedImage != null)
+                    trackedImage.gameObject.SetActive(images);
+        }
+
+        if (planeManager != null)
+        {
+            planeManager.enabled = planes;
+            foreach (var plane in planeManager.trackables)
+                if (plane != null)
+                    plane.gameObject.SetActive(planes);
+        }
+
+        if (raycastManager != null)
+            raycastManager.enabled = planes;
+
+        if (cellInteraction != null)
+        {
+            if (!planes)
+                cellInteraction.ClearSpawned();   // remove the tap-placed cell
+            
+            cellInteraction.enabled = true;       // Keep enabled so taps and zooms process
+        }
+    }
+
     private void SetARExperienceActive(bool active)
     {
         arExperienceActive = active;
@@ -206,10 +277,7 @@ public class ARPlacementManager : MonoBehaviour
             arSession.enabled = active;
         if (arCameraManager != null)
             arCameraManager.enabled = active;
-        if (planeManager != null)
-            planeManager.enabled = active;
-        if (raycastManager != null)
-            raycastManager.enabled = active;
+        ApplyMode();
         if (homeScreen != null)
             homeScreen.SetActive(!active);
         if (arControls != null)
