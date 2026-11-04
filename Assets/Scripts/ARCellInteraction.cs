@@ -24,21 +24,29 @@ public class ARCellInteraction : MonoBehaviour
     [Header("Elevation Offset")]
     [SerializeField] private float verticalOffset = 0.02f;
 
+    [Header("Placement Control")]
+    // Set by ARPlacementManager: true only in PlanePlacement mode
+    public bool canPlace = false;
+
     private GameObject spawnedObject;
     private static readonly List<ARRaycastHit> hits = new List<ARRaycastHit>();
 
     // Drag vs. Tap tracking
     private bool isDragging = false;
     private Vector2 touchStartPos;
-    private const float TapMovementThreshold = 15f; // Screen pixels threshold to distinguish tap from drag
-    private bool suppressTap = false; // True when the gesture was a spawn, pinch/rotate or key-rotate, not a tap
+    private const float TapMovementThreshold = 15f;
+    private bool suppressTap = false;
 
-    // --- NEW: Flag to prevent dragging QR-spawned cells ---
     public bool isTrackedImage = false;
 
-    // --- NEW: Method to allow external scripts to set the active cell ---
     public void SetSpawnedObject(GameObject obj)
     {
+        // If switching to a QR cell while a tap-placed cell is still active, destroy the tap cell first
+        if (spawnedObject != null && !isTrackedImage && spawnedObject != obj)
+        {
+            Destroy(spawnedObject);
+        }
+
         spawnedObject = obj;
         isTrackedImage = (obj != null);
     }
@@ -78,8 +86,8 @@ public class ARCellInteraction : MonoBehaviour
                 isDragging = false;
                 suppressTap = false;
 
-                // Initial cell placement (this touch only places the cell, it is not a selection tap)
-                if (spawnedObject == null && !IsOverUI(touch.touchId))
+                // Only allow spawning if we are explicitly in PlanePlacement mode
+                if (canPlace && spawnedObject == null && !IsOverUI(touch.touchId))
                 {
                     PlaceOrMove(touch.screenPosition, isInitialSpawn: true);
                     suppressTap = true;
@@ -87,13 +95,11 @@ public class ARCellInteraction : MonoBehaviour
             }
             else if (touch.phase == TouchPhase.Moved && spawnedObject != null)
             {
-                // Only begin dragging if finger has moved beyond the tap threshold
                 if (!isDragging && (touch.screenPosition - touchStartPos).magnitude > TapMovementThreshold)
                 {
                     isDragging = true;
                 }
 
-                // --- MODIFIED: Prevent dragging if it's a QR-spawned cell ---
                 if (isDragging && !isTrackedImage)
                 {
                     PlaceOrMove(touch.screenPosition, isInitialSpawn: false);
@@ -101,7 +107,6 @@ public class ARCellInteraction : MonoBehaviour
             }
             else if (touch.phase == TouchPhase.Ended)
             {
-                // If the gesture never exceeded the threshold, treat it as a stationary Tap
                 if (!isDragging && !suppressTap && spawnedObject != null)
                 {
                     HandleScreenTap(touch.screenPosition, touch.touchId);
@@ -115,12 +120,11 @@ public class ARCellInteraction : MonoBehaviour
         {
             var touch0 = activeTouches[0];
             var touch1 = activeTouches[1];
-            suppressTap = true; // Fingers lifting after a pinch/twist must not count as a tap
+            suppressTap = true;
 
             Vector2 prevPos0 = touch0.screenPosition - touch0.delta;
             Vector2 prevPos1 = touch1.screenPosition - touch1.delta;
 
-            // Pinch-to-scale
             float prevDist = (prevPos0 - prevPos1).magnitude;
             float curDist = (touch0.screenPosition - touch1.screenPosition).magnitude;
             float factor = curDist / (prevDist <= 0.001f ? 1f : prevDist);
@@ -129,7 +133,6 @@ public class ARCellInteraction : MonoBehaviour
             float clampedScale = Mathf.Clamp(targetScale.x, minScale, maxScale);
             spawnedObject.transform.localScale = Vector3.one * clampedScale;
 
-            // Twist-to-rotate
             Vector2 prevDir = prevPos1 - prevPos0;
             Vector2 curDir = touch1.screenPosition - touch0.screenPosition;
             float angleDelta = Vector2.SignedAngle(prevDir, curDir);
@@ -144,21 +147,20 @@ public class ARCellInteraction : MonoBehaviour
             bool isRotateKeyPressed = Keyboard.current != null && Keyboard.current.rKey.isPressed;
             bool isMiddleMouseDragging = Mouse.current.middleButton.isPressed;
 
-            // 1. ROTATE: Hold 'R' + Left-Click Drag OR Middle-Mouse Drag
             if (spawnedObject != null && (isMiddleMouseDragging || (isRotateKeyPressed && Mouse.current.leftButton.isPressed)))
             {
                 suppressTap = true;
                 float rotationSpeed = 0.4f;
                 spawnedObject.transform.Rotate(Vector3.up, -mouseDelta.x * rotationSpeed, Space.World);
             }
-            // 2. REPOSITION / SPAWN / TAP: Left-Click
             else if (Mouse.current.leftButton.wasPressedThisFrame)
             {
                 touchStartPos = mousePos;
                 isDragging = false;
                 suppressTap = false;
 
-                if (spawnedObject == null && !IsOverUI(-1))
+                // Only allow spawning if we are explicitly in PlanePlacement mode
+                if (canPlace && spawnedObject == null && !IsOverUI(-1))
                 {
                     PlaceOrMove(mousePos, isInitialSpawn: true);
                     suppressTap = true;
@@ -171,7 +173,6 @@ public class ARCellInteraction : MonoBehaviour
                     isDragging = true;
                 }
 
-                // --- MODIFIED: Prevent dragging if it's a QR-spawned cell, using mousePos ---
                 if (isDragging && !isTrackedImage)
                 {
                     PlaceOrMove(mousePos, isInitialSpawn: false);
@@ -187,7 +188,6 @@ public class ARCellInteraction : MonoBehaviour
                 suppressTap = false;
             }
 
-            // 3. ZOOM: Mouse Scroll Wheel
             float scroll = Mouse.current.scroll.ReadValue().y;
             if (scroll != 0 && spawnedObject != null)
             {
@@ -199,34 +199,33 @@ public class ARCellInteraction : MonoBehaviour
 
     private static bool IsOverUI(int pointerId)
     {
-        return EventSystem.current != null && EventSystem.current.IsPointerOverGameObject(pointerId);
+        if (EventSystem.current == null) return false;
+        if (pointerId >= 0 && EventSystem.current.IsPointerOverGameObject(pointerId)) return true;
+        return EventSystem.current.IsPointerOverGameObject();
     }
 
-    /// <summary>
-    /// Destroys the tap-placed cell (if any) and resets gesture state.
-    /// Called by ARPlacementManager when switching away from plane placement.
-    /// </summary>
     public void ClearSpawned()
     {
         if (spawnedObject != null)
         {
-            // Deselect before the organelles are destroyed so the info panel closes cleanly.
             OrganelleSelectionManager.Instance.ClearSelection();
-            Destroy(spawnedObject);
+
+            // ONLY destroy objects instantiated via tap-to-place; never destroy tracked prefab children
+            if (!isTrackedImage)
+            {
+                Destroy(spawnedObject);
+            }
         }
 
         spawnedObject = null;
+        isTrackedImage = false;
         isDragging = false;
         suppressTap = false;
     }
 
     private void HandleScreenTap(Vector2 screenPosition, int pointerId)
     {
-        // Taps on UI (e.g. an info panel) shouldn't change the selection.
-        if (EventSystem.current != null && EventSystem.current.IsPointerOverGameObject(pointerId))
-            return;
-
-        // Selects the organelle under the tap; tapping empty space clears the selection.
+        if (IsOverUI(pointerId)) return;
         OrganelleSelectionManager.Instance.TrySelectAtScreenPoint(screenPosition, arCamera);
     }
 
@@ -241,8 +240,8 @@ public class ARCellInteraction : MonoBehaviour
             {
                 spawnedObject = Instantiate(cellPrefab, targetPos, hitPose.rotation);
                 spawnedObject.transform.localScale = Vector3.one * initialScale;
+                isTrackedImage = false;
 
-                // Make the organelles tappable (adds OrganelleTargets + colliders to the spawned cell).
                 if (spawnedObject.GetComponent<CellOrganelleSetup>() == null)
                     spawnedObject.AddComponent<CellOrganelleSetup>();
             }
