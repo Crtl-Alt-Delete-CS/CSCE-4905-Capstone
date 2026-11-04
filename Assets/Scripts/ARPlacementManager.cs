@@ -240,8 +240,6 @@ public class ARPlacementManager : MonoBehaviour
         bool images = arExperienceActive && mode == ARMode.ImageTracking;
         bool planes = arExperienceActive && mode == ARMode.PlanePlacement;
 
-        // Disabling a trackable manager only stops detection; it does NOT hide the objects it
-        // already spawned. So show/hide the existing trackables explicitly as well.
         if (imageManager != null)
         {
             imageManager.enabled = images;
@@ -263,10 +261,22 @@ public class ARPlacementManager : MonoBehaviour
 
         if (cellInteraction != null)
         {
+            // 1. Tell interaction whether plane taps are allowed
+            cellInteraction.canPlace = planes;
+
+            // 2. Switching away from Plane Placement: destroy the placed cell
             if (!planes)
-                cellInteraction.ClearSpawned();   // remove the tap-placed cell
-            
-            cellInteraction.enabled = true;       // Keep enabled so taps and zooms process
+            {
+                cellInteraction.ClearSpawned();
+            }
+            // 3. Switching into Plane Placement from Image Tracking: release any active QR cell reference
+            else if (cellInteraction.isTrackedImage)
+            {
+                cellInteraction.ClearSpawned();
+            }
+
+            // Keep enabled so rotating, scaling, and organelle tapping continue working
+            cellInteraction.enabled = true;
         }
     }
 
