@@ -24,17 +24,18 @@ public class ARCellInteraction : MonoBehaviour
     [Header("Elevation Offset")]
     [SerializeField] private float verticalOffset = 0.0f;
 
-    // Added: prefabs used by the cell-selection buttons.
     [Header("Cell Choices")]
     [SerializeField] private GameObject animalCellPrefab;
     [SerializeField] private GameObject plantCellPrefab;
     [SerializeField] private GameObject bacterialCellPrefab;
     [SerializeField] private GameObject fungalCellPrefab;
 
+    [Header("Placement Control")]
+    public bool canPlace = false;
+
     private GameObject spawnedObject;
     private static readonly List<ARRaycastHit> hits = new List<ARRaycastHit>();
 
-    // Added: reset state and protection against UI gestures reaching AR controls.
     private Quaternion resetRotation;
     private bool blockGestureUntilRelease;
     private readonly List<RaycastResult> uiHits = new List<RaycastResult>();
@@ -42,11 +43,23 @@ public class ARCellInteraction : MonoBehaviour
     public string StatusMessage { get; private set; } =
         "Choose a cell, then tap a detected surface.";
 
-    // Drag vs. Tap tracking
     private bool isDragging = false;
     private Vector2 touchStartPos;
     private const float TapMovementThreshold = 15f;
     private bool suppressTap = false;
+
+    public bool isTrackedImage = false;
+
+    public void SetSpawnedObject(GameObject obj)
+    {
+        if (spawnedObject != null && !isTrackedImage && spawnedObject != obj)
+        {
+            Destroy(spawnedObject);
+        }
+
+        spawnedObject = obj;
+        isTrackedImage = (obj != null);
+    }
 
     private void Awake()
     {
@@ -74,7 +87,6 @@ public class ARCellInteraction : MonoBehaviour
     {
         var activeTouches = Touch.activeTouches;
 
-        // Added: ignore UI interactions through the end of the gesture.
         bool pointerOverUI = false;
 
         foreach (var touch in activeTouches)
@@ -110,11 +122,10 @@ public class ARCellInteraction : MonoBehaviour
             return;
         }
 
-        // Also prevent mouse-wheel zoom while hovering over UI.
         if (pointerOverUI)
             return;
 
-        // --- MOBILE 1-FINGER TOUCH ---
+        // MOBILE 1-FINGER TOUCH
         if (activeTouches.Count == 1)
         {
             var touch = activeTouches[0];
@@ -125,16 +136,20 @@ public class ARCellInteraction : MonoBehaviour
                 isDragging = false;
                 suppressTap = false;
 
-                // Initial placement should not also select an organelle.
-                if (spawnedObject == null)
+                if (canPlace &&
+                    spawnedObject == null &&
+                    !IsOverUI(touch.screenPosition))
                 {
-                    PlaceOrMove(touch.screenPosition, isInitialSpawn: true);
+                    PlaceOrMove(
+                        touch.screenPosition,
+                        isInitialSpawn: true);
+
                     suppressTap = true;
                 }
             }
-            else if (touch.phase == TouchPhase.Moved && spawnedObject != null)
+            else if (touch.phase == TouchPhase.Moved &&
+                     spawnedObject != null)
             {
-                // Only begin dragging beyond the tap threshold.
                 if (!isDragging &&
                     (touch.screenPosition - touchStartPos).magnitude >
                     TapMovementThreshold)
@@ -142,176 +157,286 @@ public class ARCellInteraction : MonoBehaviour
                     isDragging = true;
                 }
 
-                if (isDragging)
+                if (isDragging && !isTrackedImage)
                 {
-                    PlaceOrMove(touch.screenPosition, isInitialSpawn: false);
+                    PlaceOrMove(
+                        touch.screenPosition,
+                        isInitialSpawn: false);
                 }
             }
             else if (touch.phase == TouchPhase.Ended)
             {
-                // A stationary gesture counts as a tap.
-                if (!isDragging && !suppressTap && spawnedObject != null)
+                if (!isDragging &&
+                    !suppressTap &&
+                    spawnedObject != null)
                 {
-                    HandleScreenTap(touch.screenPosition, touch.touchId);
+                    HandleScreenTap(
+                        touch.screenPosition,
+                        touch.touchId);
                 }
 
                 isDragging = false;
                 suppressTap = false;
             }
         }
-        // --- MOBILE 2-FINGER TOUCH: PINCH & ROTATE ---
-        else if (activeTouches.Count == 2 && spawnedObject != null)
+
+        // MOBILE 2-FINGER TOUCH: PINCH & ROTATE
+        else if (activeTouches.Count == 2 &&
+                 spawnedObject != null)
         {
             var touch0 = activeTouches[0];
             var touch1 = activeTouches[1];
+
             suppressTap = true;
 
-            Vector2 prevPos0 = touch0.screenPosition - touch0.delta;
-            Vector2 prevPos1 = touch1.screenPosition - touch1.delta;
+            Vector2 prevPos0 =
+                touch0.screenPosition - touch0.delta;
 
-            // Pinch-to-scale
-            float prevDist = (prevPos0 - prevPos1).magnitude;
+            Vector2 prevPos1 =
+                touch1.screenPosition - touch1.delta;
+
+            float prevDist =
+                (prevPos0 - prevPos1).magnitude;
+
             float curDist =
-                (touch0.screenPosition - touch1.screenPosition).magnitude;
-            float factor = curDist / (prevDist <= 0.001f ? 1f : prevDist);
+                (touch0.screenPosition -
+                 touch1.screenPosition).magnitude;
 
-            Vector3 targetScale = spawnedObject.transform.localScale * factor;
-            float clampedScale = Mathf.Clamp(targetScale.x, minScale, maxScale);
-            spawnedObject.transform.localScale = Vector3.one * clampedScale;
+            float factor =
+                curDist /
+                (prevDist <= 0.001f ? 1f : prevDist);
 
-            // Twist-to-rotate
-            Vector2 prevDir = prevPos1 - prevPos0;
-            Vector2 curDir = touch1.screenPosition - touch0.screenPosition;
-            float angleDelta = Vector2.SignedAngle(prevDir, curDir);
+            Vector3 targetScale =
+                spawnedObject.transform.localScale * factor;
+
+            float clampedScale =
+                Mathf.Clamp(
+                    targetScale.x,
+                    minScale,
+                    maxScale);
+
+            spawnedObject.transform.localScale =
+                Vector3.one * clampedScale;
+
+            Vector2 prevDir =
+                prevPos1 - prevPos0;
+
+            Vector2 curDir =
+                touch1.screenPosition -
+                touch0.screenPosition;
+
+            float angleDelta =
+                Vector2.SignedAngle(
+                    prevDir,
+                    curDir);
 
             spawnedObject.transform.Rotate(
-                Vector3.up, -angleDelta, Space.World);
+                Vector3.up,
+                -angleDelta,
+                Space.World);
         }
-        // --- EDITOR / PC MOUSE INPUT (XR SIMULATION) ---
+
+        // EDITOR / PC MOUSE INPUT
         else if (Mouse.current != null)
         {
-            Vector2 mousePos = Mouse.current.position.ReadValue();
-            Vector2 mouseDelta = Mouse.current.delta.ReadValue();
+            Vector2 mousePos =
+                Mouse.current.position.ReadValue();
+
+            Vector2 mouseDelta =
+                Mouse.current.delta.ReadValue();
 
             bool isRotateKeyPressed =
-                Keyboard.current != null && Keyboard.current.rKey.isPressed;
+                Keyboard.current != null &&
+                Keyboard.current.rKey.isPressed;
 
             bool isMiddleMouseDragging =
                 Mouse.current.middleButton.isPressed;
 
-            // 1. ROTATE: Hold R + Left-Click Drag OR Middle-Mouse Drag
             if (spawnedObject != null &&
                 (isMiddleMouseDragging ||
-                 (isRotateKeyPressed && Mouse.current.leftButton.isPressed)))
+                 (isRotateKeyPressed &&
+                  Mouse.current.leftButton.isPressed)))
             {
                 suppressTap = true;
+
                 float rotationSpeed = 0.4f;
 
                 spawnedObject.transform.Rotate(
-                    Vector3.up, -mouseDelta.x * rotationSpeed, Space.World);
+                    Vector3.up,
+                    -mouseDelta.x * rotationSpeed,
+                    Space.World);
             }
-            // 2. REPOSITION / SPAWN / TAP: Left-Click
             else if (Mouse.current.leftButton.wasPressedThisFrame)
             {
                 touchStartPos = mousePos;
                 isDragging = false;
                 suppressTap = false;
 
-                if (spawnedObject == null)
+                if (canPlace &&
+                    spawnedObject == null &&
+                    !IsOverUI(-1))
                 {
-                    PlaceOrMove(mousePos, isInitialSpawn: true);
+                    PlaceOrMove(
+                        mousePos,
+                        isInitialSpawn: true);
+
                     suppressTap = true;
                 }
             }
-            else if (Mouse.current.leftButton.isPressed && spawnedObject != null)
+            else if (Mouse.current.leftButton.isPressed &&
+                     spawnedObject != null)
             {
                 if (!isDragging &&
-                    (mousePos - touchStartPos).magnitude > TapMovementThreshold)
+                    (mousePos - touchStartPos).magnitude >
+                    TapMovementThreshold)
                 {
                     isDragging = true;
                 }
 
-                if (isDragging)
+                if (isDragging && !isTrackedImage)
                 {
-                    PlaceOrMove(mousePos, isInitialSpawn: false);
+                    PlaceOrMove(
+                        mousePos,
+                        isInitialSpawn: false);
                 }
             }
             else if (Mouse.current.leftButton.wasReleasedThisFrame)
             {
-                if (!isDragging && !suppressTap && spawnedObject != null)
+                if (!isDragging &&
+                    !suppressTap &&
+                    spawnedObject != null)
                 {
-                    HandleScreenTap(mousePos, -1);
+                    HandleScreenTap(
+                        mousePos,
+                        -1);
                 }
 
                 isDragging = false;
                 suppressTap = false;
             }
 
-            // 3. ZOOM: Mouse Scroll Wheel
-            float scroll = Mouse.current.scroll.ReadValue().y;
+            float scroll =
+                Mouse.current.scroll.ReadValue().y;
 
-            if (scroll != 0 && spawnedObject != null)
+            if (scroll != 0 &&
+                spawnedObject != null)
             {
-                float newScale = Mathf.Clamp(
-                    spawnedObject.transform.localScale.x + (scroll * 0.005f),
-                    minScale,
-                    maxScale);
+                float newScale =
+                    Mathf.Clamp(
+                        spawnedObject.transform.localScale.x +
+                        (scroll * 0.005f),
+                        minScale,
+                        maxScale);
 
-                spawnedObject.transform.localScale = Vector3.one * newScale;
+                spawnedObject.transform.localScale =
+                    Vector3.one * newScale;
             }
         }
     }
 
-    private void HandleScreenTap(Vector2 screenPosition, int pointerId)
+    private static bool IsOverUI(int pointerId)
     {
-        // Taps on UI shouldn't change the selection.
-        if (EventSystem.current != null &&
-            EventSystem.current.IsPointerOverGameObject(pointerId))
-        {
-            return;
-        }
+        if (EventSystem.current == null)
+            return false;
 
-        // Select the organelle under the tap; empty space clears selection.
-        OrganelleSelectionManager.Instance.TrySelectAtScreenPoint(
-            screenPosition, arCamera);
+        if (pointerId >= 0 &&
+            EventSystem.current.IsPointerOverGameObject(pointerId))
+            return true;
+
+        return EventSystem.current.IsPointerOverGameObject();
     }
 
-    private void PlaceOrMove(Vector2 screenPosition, bool isInitialSpawn)
+    public void ClearSpawned()
+    {
+        if (spawnedObject != null)
+        {
+            OrganelleSelectionManager.Instance.ClearSelection();
+
+            if (!isTrackedImage)
+            {
+                Destroy(spawnedObject);
+            }
+        }
+
+        spawnedObject = null;
+        isTrackedImage = false;
+        isDragging = false;
+        suppressTap = false;
+    }
+
+    private void HandleScreenTap(
+        Vector2 screenPosition,
+        int pointerId)
+    {
+        if (IsOverUI(pointerId))
+            return;
+
+        OrganelleSelectionManager.Instance
+            .TrySelectAtScreenPoint(
+                screenPosition,
+                arCamera);
+    }
+
+    private void PlaceOrMove(
+        Vector2 screenPosition,
+        bool isInitialSpawn)
     {
         if (raycastManager.Raycast(
-            screenPosition, hits, TrackableType.PlaneWithinPolygon))
+            screenPosition,
+            hits,
+            TrackableType.PlaneWithinPolygon))
         {
             Pose hitPose = hits[0].pose;
+
             Vector3 targetPos =
-                hitPose.position + (Vector3.up * verticalOffset);
+                hitPose.position +
+                (Vector3.up * verticalOffset);
 
             if (isInitialSpawn)
             {
-                spawnedObject = Instantiate(
-                    cellPrefab, targetPos, hitPose.rotation);
+                spawnedObject =
+                    Instantiate(
+                        cellPrefab,
+                        targetPos,
+                        hitPose.rotation);
 
-                spawnedObject.transform.localScale = Vector3.one * initialScale;
+                spawnedObject.transform.localScale =
+                    Vector3.one * initialScale;
 
-                // Added: remember the original orientation for Reset.
-                resetRotation = spawnedObject.transform.rotation;
-                StatusMessage = "Cell placed. Drag, zoom, or rotate to explore.";
+                isTrackedImage = false;
 
-                // Make the organelles tappable.
-                if (spawnedObject.GetComponent<CellOrganelleSetup>() == null)
-                    spawnedObject.AddComponent<CellOrganelleSetup>();
+                resetRotation =
+                    spawnedObject.transform.rotation;
+
+                StatusMessage =
+                    "Cell placed. Drag, zoom, or rotate to explore.";
+
+                if (spawnedObject
+                    .GetComponent<CellOrganelleSetup>() == null)
+                {
+                    spawnedObject
+                        .AddComponent<CellOrganelleSetup>();
+                }
             }
             else
             {
-                spawnedObject.transform.position = targetPos;
+                spawnedObject.transform.position =
+                    targetPos;
             }
         }
     }
 
-    // Added: onscreen cell-selection methods.
-    public void SelectAnimalCell() => SelectCell(animalCellPrefab);
-    public void SelectPlantCell() => SelectCell(plantCellPrefab);
-    public void SelectBacterialCell() => SelectCell(bacterialCellPrefab);
-    public void SelectFungalCell() => SelectCell(fungalCellPrefab);
+    public void SelectAnimalCell()
+        => SelectCell(animalCellPrefab);
+
+    public void SelectPlantCell()
+        => SelectCell(plantCellPrefab);
+
+    public void SelectBacterialCell()
+        => SelectCell(bacterialCellPrefab);
+
+    public void SelectFungalCell()
+        => SelectCell(fungalCellPrefab);
 
     public void SelectCell(GameObject selectedPrefab)
     {
@@ -319,69 +444,107 @@ public class ARCellInteraction : MonoBehaviour
 
         if (selectedPrefab == null)
         {
-            StatusMessage = "Assign this cell's prefab in the Inspector.";
-            Debug.LogWarning(StatusMessage, this);
+            StatusMessage =
+                "Assign this cell's prefab in the Inspector.";
+
+            Debug.LogWarning(
+                StatusMessage,
+                this);
+
             return;
         }
 
-        OrganelleSelectionManager.Instance.ClearSelection();
+        OrganelleSelectionManager.Instance
+            .ClearSelection();
+
         cellPrefab = selectedPrefab;
 
         if (spawnedObject == null)
         {
-            StatusMessage = "Cell selected. Tap a detected surface to place it.";
+            StatusMessage =
+                "Cell selected. Tap a detected surface to place it.";
+
             return;
         }
 
-        Vector3 position = spawnedObject.transform.position;
-        Quaternion rotation = spawnedObject.transform.rotation;
-        Vector3 scale = spawnedObject.transform.localScale;
+        Vector3 position =
+            spawnedObject.transform.position;
+
+        Quaternion rotation =
+            spawnedObject.transform.rotation;
+
+        Vector3 scale =
+            spawnedObject.transform.localScale;
 
         spawnedObject.SetActive(false);
         Destroy(spawnedObject);
 
-        spawnedObject = Instantiate(cellPrefab, position, rotation);
-        spawnedObject.transform.localScale = scale;
+        spawnedObject =
+            Instantiate(
+                cellPrefab,
+                position,
+                rotation);
 
-        if (spawnedObject.GetComponent<CellOrganelleSetup>() == null)
-            spawnedObject.AddComponent<CellOrganelleSetup>();
+        spawnedObject.transform.localScale =
+            scale;
+
+        if (spawnedObject
+            .GetComponent<CellOrganelleSetup>() == null)
+        {
+            spawnedObject
+                .AddComponent<CellOrganelleSetup>();
+        }
 
         StatusMessage = "Cell switched.";
     }
 
-    // Added: reset size and rotation at the current position.
     public void ResetCell()
     {
         BlockCurrentGesture();
 
         if (spawnedObject == null)
         {
-            StatusMessage = "Place a cell first.";
+            StatusMessage =
+                "Place a cell first.";
+
             return;
         }
 
-        OrganelleSelectionManager.Instance.ClearSelection();
-        spawnedObject.transform.rotation = resetRotation;
-        spawnedObject.transform.localScale = Vector3.one * initialScale;
+        OrganelleSelectionManager.Instance
+            .ClearSelection();
 
-        StatusMessage = "Cell size and rotation reset.";
+        spawnedObject.transform.rotation =
+            resetRotation;
+
+        spawnedObject.transform.localScale =
+            Vector3.one * initialScale;
+
+        StatusMessage =
+            "Cell size and rotation reset.";
     }
 
-    // Added: move onto a detected surface at the center of the camera view.
     public void RecenterCell()
     {
         BlockCurrentGesture();
 
         if (spawnedObject == null)
         {
-            StatusMessage = "Place a cell first.";
+            StatusMessage =
+                "Place a cell first.";
+
             return;
         }
 
-        if (arCamera == null || raycastManager == null)
+        if (arCamera == null ||
+            raycastManager == null)
         {
-            StatusMessage = "AR camera or raycast manager is missing.";
-            Debug.LogWarning(StatusMessage, this);
+            StatusMessage =
+                "AR camera or raycast manager is missing.";
+
+            Debug.LogWarning(
+                StatusMessage,
+                this);
+
             return;
         }
 
@@ -390,24 +553,33 @@ public class ARCellInteraction : MonoBehaviour
             hits,
             TrackableType.PlaneWithinPolygon))
         {
-            StatusMessage = "Point the camera at a detected surface and retry.";
-            Debug.Log(StatusMessage, this);
+            StatusMessage =
+                "Point the camera at a detected surface and retry.";
+
+            Debug.Log(
+                StatusMessage,
+                this);
+
             return;
         }
 
-        OrganelleSelectionManager.Instance.ClearSelection();
+        OrganelleSelectionManager.Instance
+            .ClearSelection();
 
         spawnedObject.transform.position =
-            hits[0].pose.position + Vector3.up * verticalOffset;
+            hits[0].pose.position +
+            Vector3.up * verticalOffset;
 
-        StatusMessage = "Cell re-centered.";
+        StatusMessage =
+            "Cell re-centered.";
     }
 
-    // Added: remove the cell so another can be placed.
     public void ClearCell()
     {
         BlockCurrentGesture();
-        OrganelleSelectionManager.Instance.ClearSelection();
+
+        OrganelleSelectionManager.Instance
+            .ClearSelection();
 
         if (spawnedObject != null)
         {
@@ -416,27 +588,36 @@ public class ARCellInteraction : MonoBehaviour
             spawnedObject = null;
         }
 
-        StatusMessage = "Cell cleared. Tap a detected surface to place it again.";
+        StatusMessage =
+            "Cell cleared. Tap a detected surface to place it again.";
     }
 
-    // Added: detect Canvas UI under the pointer.
-    private bool IsOverUI(Vector2 screenPosition)
+    private bool IsOverUI(
+        Vector2 screenPosition)
     {
         if (EventSystem.current == null)
             return false;
 
-        var pointer = new PointerEventData(EventSystem.current)
-        {
-            position = screenPosition
-        };
+        var pointer =
+            new PointerEventData(
+                EventSystem.current)
+            {
+                position = screenPosition
+            };
 
         uiHits.Clear();
-        EventSystem.current.RaycastAll(pointer, uiHits);
+
+        EventSystem.current.RaycastAll(
+            pointer,
+            uiHits);
 
         foreach (var hit in uiHits)
         {
-            if (hit.module is UnityEngine.UI.GraphicRaycaster)
+            if (hit.module is
+                UnityEngine.UI.GraphicRaycaster)
+            {
                 return true;
+            }
         }
 
         return false;
