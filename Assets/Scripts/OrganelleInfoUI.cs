@@ -7,12 +7,6 @@ using static UnityEngine.EventSystems.EventTrigger;
 
 public class OrganelleInfoUI : MonoBehaviour
 {
-    //[Serializable]
-    ////public  class OrganelleAudio
-    ////{
-    ////    public string organelleName;
-    ////    public AudioClip[] pageAudioClips;
-    ////}
 
     [Header("Panel Root")]
     public GameObject panelRoot;
@@ -28,7 +22,6 @@ public class OrganelleInfoUI : MonoBehaviour
 
     [Header("Audio")]
     public AudioSource audioSource;
-    //public OrganelleAudio[] audioLibrary;
 
     // Internal data storage for the currently active organelle
     private string[] currentPages;
@@ -62,18 +55,6 @@ public class OrganelleInfoUI : MonoBehaviour
         currentPages = data.pages;
         currentAudioClips = data.pageAudioClips;
         currentPageIndex = 0;
-
-        //currentAudioClips = null;
-        //if (audioLibrary != null)
-        //{
-        //    OrganelleAudio entry = Array.Find(audioLibrary, a =>
-        //        a != null && !string.IsNullOrEmpty(a.organelleName) &&
-        //        a.organelleName.Trim().Equals(organelleName.Trim(), StringComparison.OrdinalIgnoreCase));
-
-        //    if (entry != null)
-        //        currentAudioClips = entry.pageAudioClips;
-        //}
-        
 
         UpdatePageDisplay();
     }
@@ -126,32 +107,4 @@ public class OrganelleInfoUI : MonoBehaviour
         }
     }
 
-    //[SerializeField] private GameObject panel;
-    //[SerializeField] private TextMeshProUGUI titleText;
-    //[SerializeField] private TextMeshProUGUI descriptionText;
-
-    //private void OnEnable()
-    //{
-    //    OrganelleSelectionManager.OnOrganelleSelected += ShowInfo;
-    //    OrganelleSelectionManager.OnSelectionCleared += HideInfo;
-    //}
-
-    //private void OnDisable()
-    //{
-    //    OrganelleSelectionManager.OnOrganelleSelected -= ShowInfo;
-    //    OrganelleSelectionManager.OnSelectionCleared -= HideInfo;
-    //}
-
-    //private void ShowInfo(OrganelleTarget organelle)
-    //{
-    //    panel.SetActive(true);
-    //    titleText.text = organelle.OrganelleName;
-    //    if (descriptionText != null)
-    //        descriptionText.text = organelle.description;
-    //}
-
-    //private void HideInfo()
-    //{
-    //    panel.SetActive(false);
-    //}
 }

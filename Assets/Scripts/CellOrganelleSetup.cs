@@ -19,11 +19,18 @@ public class CellOrganelleSetup : MonoBehaviour
     // Containers / backdrops that should never be selectable (and must not block taps on what is inside them).
     private static readonly string[] NonSelectable =
     {
-        "PlasmaMembrane", "CellWall", "Cytoplasm", "Cytoskeleton", "itoskeleton", "Plasmodesmata", "_cameraDirection"
+        "_cameraDirection",
+        "CellWall", "itoskeleton", "Plasmodesmata",
+
+        //Animal-cell
+        "PlasmaMembrane",
+        "Cytoskeleton",
+        "Cytoplasm",
+        
     };
 
     // Groups whose children together form ONE organelle (nucleus = envelope + pores + nucleolus).
-    private static readonly HashSet<string> WholeGroup = new HashSet<string> { "Nucleus", "Reticulum" };
+    private static readonly HashSet<string> WholeGroup = new HashSet<string> {"Nucleus" ,"Reticulum" };
 
     //private static readonly Dictionary<string, (string name, string[] pages)> Info = new Dictionary<string, (string, string[])>
     //{

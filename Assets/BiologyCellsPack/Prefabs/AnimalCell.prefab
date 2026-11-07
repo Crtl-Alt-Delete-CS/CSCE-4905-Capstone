@@ -2146,6 +2146,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4497217757719002}
   - component: {fileID: 2604460939662529319}
+  - component: {fileID: 942425405548110029}
   m_Layer: 7
   m_Name: BubbleGolgi
   m_TagString: Untagged
@@ -2175,7 +2176,6 @@ Transform:
   - {fileID: 4995592643870640}
   - {fileID: 4973913344863426}
   - {fileID: 4913141882515500}
-  - {fileID: 4904097566500504}
   - {fileID: 4631511165086564}
   - {fileID: 4467857804930362}
   m_Father: {fileID: 4160036950370334}
@@ -2202,6 +2202,29 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: 4300000, guid: 37a7007450d8472478e8aaff976dcad5, type: 3}
+--- !u!114 &942425405548110029
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1080710193831658}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a07957c9f93775845a1d82728a668f72, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::OrganelleData
+  organelleName: Golgi Apparatus and Golgi Vesicles
+  pages:
+  - (pronounced GOHL-jee ap-uh-RAT-us) Just like a city needs a post office to sort, package, and mail out items, a cell needs a way to ship important materials. That job belongs to the Golgi apparatus and its tiny delivery trucks, the Golgi vesicles!
+  - What Do They Do? When the cell's factory (the ER) finishes building proteins and fats, it sends them over to the Golgi. The Golgi inspects these materials, makes a few final changes, and packs them into tiny protective bubbles called vesicles (the "bubble Golgi"). These bubbles then zip away like delivery trucks, safely carrying the packages to other parts of the cell or even right out the front door!
+  - 'The purpose of its structure: The main Golgi apparatus looks like a stack of squished pancakes or folded ribbons. This stacked shape is important because it acts like an assembly line, passing materials through different layers to prepare them step-by-step. The "bubble Golgi" (vesicles) are the little round spheres you see floating nearby, pinching right off the edges of the pancakes to carry the finished packages away.'
+  - 'Fun Fact: The Golgi apparatus is the only organelle in the entire cell that is named after a real person! It was discovered by an Italian scientist named Camillo Golgi way back in 1898.'
+  pageAudioClips:
+  - {fileID: 8300000, guid: 33d714435379e9543921c5de74e867d0, type: 3}
+  - {fileID: 8300000, guid: 532d65658934e0d45953037d375a9378, type: 3}
+  - {fileID: 8300000, guid: 3fdebade404b3d24a9d61d7c02307505, type: 3}
+  - {fileID: 8300000, guid: 7359123afabb562409274013c739e988, type: 3}
 --- !u!1 &1081411996964958
 GameObject:
   m_ObjectHideFlags: 0
@@ -10534,6 +10557,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4296297555621336}
   - component: {fileID: 9050817719781071578}
+  - component: {fileID: 8594262164487111236}
   m_Layer: 0
   m_Name: Lysosome
   m_TagString: Untagged
@@ -10598,6 +10622,29 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: 0}
+--- !u!114 &8594262164487111236
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1341768824583678}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a07957c9f93775845a1d82728a668f72, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::OrganelleData
+  organelleName: Lysosome
+  pages:
+  - (pronounced LYE-suh-sohm) Just like a busy city needs a recycling center and garbage trucks, a cell needs a way to clean up its trash. That important cleanup job belongs to a tiny organelle called the lysosome!
+  - What Do They Do? When the cell has waste, worn-out parts, or even invading germs, the lysosome steps in to help. It acts like a tiny stomach, swallowing up the trash and using special chemicals to break it down. It even recycles the good materials so the cell can use them to build new things.
+  - 'The purpose of its structure: The lysosome looks like a simple, round bubble or sac. This strong outer bubble is extremely important because it acts like a safety wall. It locks away the powerful "digestive juices" inside so they don''t leak out and accidentally damage the rest of the healthy cell.'
+  - 'Fun Fact: Lysosomes are the secret behind how a tadpole turns into a frog! When a tadpole is ready to grow up, the cells in its tail use their lysosomes to safely digest themselves. The frog''s body then recycles that energy to grow its new legs!'
+  pageAudioClips:
+  - {fileID: 8300000, guid: 6cc275bd888a6c946b944a20c3453916, type: 3}
+  - {fileID: 8300000, guid: c80c6422f9610bf40a91394363edf6b3, type: 3}
+  - {fileID: 8300000, guid: 4ca8966c0d4a26842a9165e802fcca8c, type: 3}
+  - {fileID: 8300000, guid: e134d54391bc3bb46b0f953b83b078b3, type: 3}
 --- !u!1 &1343468670825716
 GameObject:
   m_ObjectHideFlags: 0
@@ -13427,7 +13474,8 @@ Transform:
   m_LocalPosition: {x: 0.068303615, y: 0.035616778, z: -0.079433106}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 4904097566500504}
   m_Father: {fileID: 4497217757719002}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &33985837719721680
@@ -16280,6 +16328,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4405080746343154}
   - component: {fileID: 1944417741011037614}
+  - component: {fileID: 5807197394168657558}
   m_Layer: 0
   m_Name: IncorporationOf
   m_TagString: Untagged
@@ -16348,6 +16397,29 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: 0}
+--- !u!114 &5807197394168657558
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1621317258178118}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a07957c9f93775845a1d82728a668f72, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::OrganelleData
+  organelleName: Cell Inclusions
+  pages:
+  - (pronounced in-KLOO-zhuns) Just like a house needs a pantry or a closet to store extra food and supplies for later, a cell needs a place to stash its leftovers. Those tiny storage spots are called cell inclusions!
+  - What Do They Do? Inclusions are simply clumps of stored materials waiting to be used. Sometimes they hold extra fat or sugar for the cell to use as a quick snack when it needs energy. Other times, they hold special chemicals, like the pigments that give your hair and eyes their color.
+  - 'The purpose of its structure: These inclusions look like simple, little floating blobs, drops, or grains scattered around the empty space of the cell. Because their only job is to hold stuff, they don''t need a complicated maze or a thick vault like other organelles. They are just tightly packed drops of material, which is the perfect shape for taking up as little room as possible while they wait to be used.'
+  - 'Fun Fact: If you eat more sugar than your body needs right away, your liver and muscle cells will pack that extra sugar tightly together into special inclusions called "glycogen." This acts like a secret backup battery, giving you a sudden burst of energy for your next gym class or recess!'
+  pageAudioClips:
+  - {fileID: 8300000, guid: 2649ded32819f8f498b78b87c5d977a5, type: 3}
+  - {fileID: 8300000, guid: 321bfe3f36724c840a7c8d449ebf766b, type: 3}
+  - {fileID: 8300000, guid: c4a7102fe8a5a124eb90cf8b9cbd1391, type: 3}
+  - {fileID: 8300000, guid: 5437969f39060cb4ba50c00ab62aa62a, type: 3}
 --- !u!1 &1622854422278772
 GameObject:
   m_ObjectHideFlags: 0
@@ -17798,6 +17870,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4100270870257590}
   - component: {fileID: 2849436340758632675}
+  - component: {fileID: 6069006787088597519}
   m_Layer: 0
   m_Name: Reticulum
   m_TagString: Untagged
@@ -17846,6 +17919,29 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: 0}
+--- !u!114 &6069006787088597519
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1689968159606202}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a07957c9f93775845a1d82728a668f72, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::OrganelleData
+  organelleName: Endoplasmic Reticulum (ER)
+  pages:
+  - (pronounced en-doh-PLAZ-mik rih-TIK-yuh-lum) Because that is a mouthful, scientists usually just call it the "ER" for short! Just like a busy city has a giant factory to manufacture goods and a highway system to deliver them, a cell needs a way to build and transport important materials. That huge job belongs to the endoplasmic reticulum.
+  - 'What Do They Do? The ER is divided into two different workspaces: Rough and Smooth. The Rough ER acts like a protein factory, building the main materials the body needs to grow and heal. The Smooth ER has a different job, it builds lipids (fats) and acts like a cleaning crew to break down harmful toxins. Once these materials are built, the ER works like a twisting highway to ship them where they need to go.'
+  - 'The purpose of its structure: The ER looks like a giant, folded maze of flat tunnels and twisting tubes wrapped right around the center of the cell. If you look closely, one section is covered in tiny dots (the Rough ER), while the rest is completely smooth (the Smooth ER). Those dots are tiny workers called "ribosomes." The ER is folded up so tightly to create a massive amount of "factory floor" space for those workers, letting the cell build tons of materials without taking up too much room!'
+  - 'Fun Fact: Your liver is the organ in charge of cleaning bad chemicals and toxins out of your blood. Because the Smooth ER is the cell''s main chemical cleanup crew, a single liver cell is packed with huge amounts of Smooth ER to help keep you healthy!'
+  pageAudioClips:
+  - {fileID: 8300000, guid: d0f29a5e4fe77f546bf14f03a0549253, type: 3}
+  - {fileID: 8300000, guid: a71958f75b15e82448614db1783d3f31, type: 3}
+  - {fileID: 8300000, guid: 33e124a26320dbf47a593e232e6de426, type: 3}
+  - {fileID: 8300000, guid: cea3d5def5f7fa24fb40c640aef17784, type: 3}
 --- !u!1 &1691630739875368
 GameObject:
   m_ObjectHideFlags: 0
@@ -18502,12 +18598,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1713171787170482}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: 1.110223e-16, z: 0.00000008742278, w: 1}
-  m_LocalPosition: {x: 0.1975694, y: -0.0040637627, z: -0.15701975}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0.12926579, y: -0.039680563, z: -0.07758664}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 4497217757719002}
+  m_Father: {fileID: 4641439053726306}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &33741809856503812
 MeshFilter:
@@ -20532,6 +20628,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4991559865616034}
   - component: {fileID: 9191907672603293745}
+  - component: {fileID: 904285480866015857}
   m_Layer: 0
   m_Name: Nucleus
   m_TagString: Untagged
@@ -20582,6 +20679,29 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: 0}
+--- !u!114 &904285480866015857
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1793347927239012}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a07957c9f93775845a1d82728a668f72, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::OrganelleData
+  organelleName: Nucleus
+  pages:
+  - (pronounced NOO-klee-us) Just like a city has a city hall or a school has a principal's office, a cell needs a control center to make big decisions. That important job belongs to the nucleus! It acts as the brain or the "boss" of the entire cell.
+  - 'What Do They Do? The nucleus holds the cell''s most valuable treasure: your DNA! DNA is the ultimate instruction manual that tells the cell how to grow, what to build, and how to survive. The nucleus protects this manual and sends out tiny message copies (like blueprints) to the rest of the cell so the other organelles know exactly what to do.'
+  - 'The purpose of its structure: The nucleus is usually the biggest, roundest shape right in the middle. It has a tough outer shell called the nuclear envelope, which acts like a thick bank vault to keep the DNA safe. This vault is covered in tiny holes called pores, which act like guarded doors letting only specific messages in and out. Right in the very center, you will see a smaller, solid ball called the nucleolus, this is a special mini-factory whose only job is to build the cell''s ribosomes!'
+  - 'Fun Fact: Almost every cell in your body has a nucleus, but there is one major exception: your red blood cells! When red blood cells grow up, they actually spit out their nucleus entirely so they have more empty room inside to carry oxygen around your body.'
+  pageAudioClips:
+  - {fileID: 8300000, guid: 8650518a3774b0341bfc61e6bd70ca67, type: 3}
+  - {fileID: 8300000, guid: 51d0708c8bc2fe344b9142a8a912c7c5, type: 3}
+  - {fileID: 8300000, guid: a0b33bbcb21896543bddea6920eebb08, type: 3}
+  - {fileID: 8300000, guid: ce684304d9ac27e45a7970845414e384, type: 3}
 --- !u!1 &1794066940604428
 GameObject:
   m_ObjectHideFlags: 0
@@ -21975,6 +22095,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4121500511266734}
   - component: {fileID: 4311446500557604740}
+  - component: {fileID: 7915617290952366107}
   m_Layer: 0
   m_Name: Ribosome
   m_TagString: Untagged
@@ -22176,6 +22297,29 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: 0}
+--- !u!114 &7915617290952366107
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1863018046600810}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a07957c9f93775845a1d82728a668f72, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::OrganelleData
+  organelleName: Ribosome
+  pages:
+  - (pronounced RYE-buh-sohm) Just like a construction site needs workers to read the blueprints and build a house, your body needs tiny workers to read instructions and build you! Those tiny, hard-working builders are called ribosomes.
+  - What Do They Do? Ribosomes are the protein builders of the cell. The nucleus sends out a copy of your DNA instructions, and the ribosome reads it like a recipe card. By reading this recipe, it knows exactly how to snap smaller pieces together to build a protein. These proteins are then used to build your hair, skin, muscles, and help your body heal!
+  - 'The purpose of its structure: When you look at the 3D model, ribosomes just look like tiny little dots or seeds. They are the smallest organelles in the whole cell! Even though they look like simple dots, they are actually made of two separate puzzle pieces (a top piece and a bottom piece) that clamp together perfectly around the recipe card to read it. Because they are so small, a single cell can easily fit millions of them inside to get lots of building done at once.'
+  - 'Fun Fact: Ribosomes are incredibly important for survival. In fact, they are one of the only organelles that you can find in absolutely every living thing on planet Earth! Whether it is a plant, an animal, a fungus, or a microscopic bacteria, they all rely on ribosomes to stay alive.'
+  pageAudioClips:
+  - {fileID: 8300000, guid: a007badf9ec17c648b8f03ab64ba5a22, type: 3}
+  - {fileID: 8300000, guid: 8138087fc4fff314893672f107ef24f4, type: 3}
+  - {fileID: 8300000, guid: 9e1dcf9cde57d5c4ca0d74cc955e9857, type: 3}
+  - {fileID: 8300000, guid: 797399705f6058740a6d1f9486f39b50, type: 3}
 --- !u!1 &1865706652128094
 GameObject:
   m_ObjectHideFlags: 0
@@ -22891,7 +23035,7 @@ MonoBehaviour:
   pages:
   - (pronounced my-toe-KON-dree-uhn) Just like a phone needs a battery to run, an animal cell needs power to survive. That power comes from a tiny organelle called the mitochondria. Because of this, scientists often call it the "powerhouse" of the cell!
   - What Do They Do? When you eat a meal, your stomach breaks the food down into tiny pieces. However, your body's cells can't use those pieces for energy right away. That is where the mitochondria step in. They take those tiny pieces of food, mix them with the oxygen you breathe in, and turn them into a special type of "cell energy", without this energy, your cells wouldn't be able to do their jobs.
-  - What Do They Look Like? If you were to look at an animal cell under a very powerful microscope, the mitochondria look a bit like little jelly beans or peanuts floating around. Inside that jelly-bean shape is a folded membrane that zig-zags back and forth. This folded zig-zag pattern is really important because it gives the mitochondria a lot more room to build and store energy.
+  - 'The purpose of its structure: The mitochondrion looks like a bean with a zig-zag maze inside. That inner folded membrane zig-zags back and forth for a very important reason: it creates a lot more surface area (or working room) inside a tiny space. It is like folding a giant piece of paper to fit it into a small envelope, giving the mitochondria the maximum amount of space to build and pack in energy.'
   - 'Fun Fact: The harder a cell has to work, the more mitochondria it needs. A skin cell doesn''t move much, so it only has a few. But your heart and muscle cells are constantly working and moving, so a single muscle cell can have thousands of mitochondria inside it!'
   pageAudioClips:
   - {fileID: 8300000, guid: 2cfb56c4a7964994d803101678cb01f8, type: 3}
@@ -24291,6 +24435,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4888941233345496}
   - component: {fileID: 7709227510598045500}
+  - component: {fileID: 2324974205754806547}
   m_Layer: 7
   m_Name: Centriole
   m_TagString: Untagged
@@ -24337,6 +24482,29 @@ MeshCollider:
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: 4300028, guid: 1a5d1b95dbfbd4a4c92f8cc04044831c, type: 3}
+--- !u!114 &2324974205754806547
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1950799390443212}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a07957c9f93775845a1d82728a668f72, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::OrganelleData
+  organelleName: Centriole
+  pages:
+  - (pronounced SEN-tree-ohl) Just like a moving company needs organizers and heavy-duty cranes to move furniture into two different houses, an animal cell needs help when it is time to split and make a copy of itself. That important organizing job belongs to the centriole!
+  - What Do They Do? When an animal cell grows and gets ready to divide into two new cells, it has to split its DNA perfectly in half. The centrioles act like tiny traffic cops or anchors. They cast out long, microscopic ropes (called spindle fibers) that grab onto the DNA and pull it neatly to opposite sides, ensuring each new cell gets exactly the right instructions to survive.
+  - 'The purpose of its structure: Centrioles look a bit like bundles of dry pasta or tube-shaped churros! They usually come in a pair, sitting next to each other in the shape of a letter "T". These bundles are made of strong microscopic tubes, which is very important because they need to be tough and rigid enough to act as heavy-duty anchors when pulling the cell apart.'
+  - 'Fun Fact: You will usually only find centrioles in animal cells! Most plant cells do not have them at all. Because plant cells have hard, rigid outer walls, they manage to organize and divide their DNA using a completely different set of tools.'
+  pageAudioClips:
+  - {fileID: 8300000, guid: 827e214b44aa2a74ea37d9473a664800, type: 3}
+  - {fileID: 8300000, guid: 2074097c5a9432e4e8420c86041946da, type: 3}
+  - {fileID: 8300000, guid: b08d29f38932a5f44b269fcbda494c67, type: 3}
+  - {fileID: 8300000, guid: a1423e39ed4bbb2498f9a3110fab2e1d, type: 3}
 --- !u!1 &1953916411392650
 GameObject:
   m_ObjectHideFlags: 0
