@@ -1,80 +1,98 @@
-using NUnit.Framework;
 using System;
-using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-using static UnityEngine.EventSystems.EventTrigger;
+using TMPro;
 
 public class OrganelleInfoUI : MonoBehaviour
 {
     [Serializable]
-    public  class OrganelleAudio
+    public struct OrganelleAudio
     {
         public string organelleName;
-        public AudioClip[] pageAudioClips;
+        public AudioClip[] pageClips;
     }
 
-    [Header("Panel Root")]
+    [Header("UI Panel & Text")]
     public GameObject panelRoot;
-
-    [Header("Text Displays")]
     public TMP_Text organelleTitle;
     public TMP_Text organelleDescription;
 
-    [Header("Buttons")]
+    [Header("Controls")]
     public Button nextButton;
     public Button soundButton;
     public Button closeButton;
+    public Button isolateButton;
+    public TMP_Text isolateButtonText;
 
     [Header("Audio")]
     public AudioSource audioSource;
     public OrganelleAudio[] audioLibrary;
 
-    // Internal data storage for the currently active organelle
-    private string[] currentPages;
-    private AudioClip[] currentAudioClips;
-    private int currentPageIndex = 0;
+    private string[] _currentPages;
+    private int _currentPageIndex;
+    private string _currentOrganelleName;
 
-    void Awake()
+    private void Awake()
     {
-        //Ensure the panel starts hidden
-        if (panelRoot != null)
-            panelRoot.SetActive(false);
-
-        //Set up button click listeners
         if (nextButton != null)
-            nextButton.onClick.AddListener(OnNextClicked);
-        
+            nextButton.onClick.AddListener(OnNextPageClicked);
+
         if (soundButton != null)
             soundButton.onClick.AddListener(OnSoundClicked);
-        
+
         if (closeButton != null)
-            closeButton.onClick.AddListener(HidePanel);
-        
+            closeButton.onClick.AddListener(OnCloseClicked);
+
+        if (isolateButton != null)
+        {
+            isolateButton.onClick.AddListener(OnIsolateClicked);
+            if (isolateButtonText == null)
+            {
+                isolateButtonText = isolateButton.GetComponentInChildren<TMP_Text>();
+            }
+        }
+
+        if (panelRoot != null)
+            panelRoot.SetActive(false);
     }
 
-    public void DisplayOrganelle(string organelleName, string[] pages)
+    private void OnEnable()
     {
+        OrganelleSelectionManager.OnIsolationStateChanged += UpdateIsolateButtonVisual;
+    }
+
+    private void OnDisable()
+    {
+        OrganelleSelectionManager.OnIsolationStateChanged -= UpdateIsolateButtonVisual;
+    }
+
+    public void DisplayOrganelle(string title, string[] pages)
+    {
+        _currentOrganelleName = title;
+        _currentPages = (pages != null && pages.Length > 0) ? pages : new[] { "" };
+        _currentPageIndex = 0;
+
         if (panelRoot != null)
             panelRoot.SetActive(true);
 
-        organelleTitle.text = organelleName;
-        currentPages = pages;
-        currentPageIndex = 0;
+        if (organelleTitle != null)
+            organelleTitle.text = title;
 
-        currentAudioClips = null;
-        if (audioLibrary != null)
-        {
-            OrganelleAudio entry = Array.Find(audioLibrary, a =>
-                a != null && !string.IsNullOrEmpty(a.organelleName) &&
-                a.organelleName.Trim().Equals(organelleName.Trim(), StringComparison.OrdinalIgnoreCase));
+        if (nextButton != null)
+            nextButton.gameObject.SetActive(_currentPages.Length > 1);
 
-            if (entry != null)
-                currentAudioClips = entry.pageAudioClips;
-        }
-        
+        bool isCurrentlyIsolated = OrganelleSelectionManager.Instance != null && OrganelleSelectionManager.Instance.IsIsolated;
+        UpdateIsolateButtonVisual(isCurrentlyIsolated);
 
-        UpdatePageDisplay();
+        UpdatePageContent();
+    }
+
+    public void DisplayOrganelle(string title, string singleDescription)
+    {
+        string[] pages = !string.IsNullOrEmpty(singleDescription)
+            ? singleDescription.Split(new[] { "\n\n", "|" }, StringSplitOptions.RemoveEmptyEntries)
+            : new[] { "" };
+        DisplayOrganelle(title, pages);
     }
 
     public void HidePanel()
@@ -86,78 +104,91 @@ public class OrganelleInfoUI : MonoBehaviour
             panelRoot.SetActive(false);
     }
 
-    private void OnNextClicked()
+    private void OnNextPageClicked()
     {
-        if (currentPages == null || currentPages.Length <= 1) return;
+        if (_currentPages == null || _currentPages.Length <= 1)
+            return;
 
-        //Move to the next page
-        currentPageIndex = (currentPageIndex + 1) % currentPages.Length;
-        UpdatePageDisplay();
+        _currentPageIndex = (_currentPageIndex + 1) % _currentPages.Length;
+        UpdatePageContent();
+    }
 
-        //Stop previous audio when moving to the next page
+    private void UpdatePageContent()
+    {
+        if (organelleDescription != null && _currentPages != null && _currentPages.Length > 0)
+        {
+            organelleDescription.text = _currentPages[_currentPageIndex].Trim();
+        }
+
         if (audioSource != null && audioSource.isPlaying)
+        {
             audioSource.Stop();
+        }
     }
 
     private void OnSoundClicked()
     {
-        if (audioSource == null)
-        {
+        if (audioSource == null || audioLibrary == null)
             return;
-        }
 
-        if (currentAudioClips == null || currentAudioClips.Length == 0)
-        {
-            return;
-        }
-
-        if (currentPageIndex < currentAudioClips.Length && currentAudioClips[currentPageIndex] != null)
+        if (audioSource.isPlaying)
         {
             audioSource.Stop();
-            audioSource.clip = currentAudioClips[currentPageIndex];
+            return;
+        }
+
+        AudioClip clip = GetClipForCurrentPage(_currentOrganelleName, _currentPageIndex);
+        if (clip != null)
+        {
+            audioSource.clip = clip;
             audioSource.Play();
         }
     }
 
-
-    private void UpdatePageDisplay()
+    private AudioClip GetClipForCurrentPage(string organelleName, int pageIndex)
     {
-        if (currentPages != null && currentPages.Length > 0)
+        if (string.IsNullOrEmpty(organelleName) || audioLibrary == null)
+            return null;
+
+        foreach (OrganelleAudio entry in audioLibrary)
         {
-            organelleDescription.text = currentPages[currentPageIndex];
+            if (string.Equals(entry.organelleName, organelleName, StringComparison.OrdinalIgnoreCase))
+            {
+                if (entry.pageClips != null && entry.pageClips.Length > 0)
+                {
+                    int clampedIndex = Mathf.Clamp(pageIndex, 0, entry.pageClips.Length - 1);
+                    return entry.pageClips[clampedIndex];
+                }
+            }
         }
-        else
+        return null;
+    }
+
+    private void OnIsolateClicked()
+    {
+        if (OrganelleSelectionManager.Instance != null)
         {
-            organelleDescription.text = "";
+            OrganelleSelectionManager.Instance.ToggleIsolateCurrent();
         }
     }
 
-    //[SerializeField] private GameObject panel;
-    //[SerializeField] private TextMeshProUGUI titleText;
-    //[SerializeField] private TextMeshProUGUI descriptionText;
+    private void UpdateIsolateButtonVisual(bool isIsolated)
+    {
+        if (isolateButtonText != null)
+        {
+            isolateButtonText.text = isIsolated ? "Show Full Cell" : "Isolate Organelle";
+        }
+    }
 
-    //private void OnEnable()
-    //{
-    //    OrganelleSelectionManager.OnOrganelleSelected += ShowInfo;
-    //    OrganelleSelectionManager.OnSelectionCleared += HideInfo;
-    //}
-
-    //private void OnDisable()
-    //{
-    //    OrganelleSelectionManager.OnOrganelleSelected -= ShowInfo;
-    //    OrganelleSelectionManager.OnSelectionCleared -= HideInfo;
-    //}
-
-    //private void ShowInfo(OrganelleTarget organelle)
-    //{
-    //    panel.SetActive(true);
-    //    titleText.text = organelle.OrganelleName;
-    //    if (descriptionText != null)
-    //        descriptionText.text = organelle.description;
-    //}
-
-    //private void HideInfo()
-    //{
-    //    panel.SetActive(false);
-    //}
+    private void OnCloseClicked()
+    {
+        if (OrganelleSelectionManager.Instance != null)
+        {
+            OrganelleSelectionManager.Instance.ClearSelection();
+        }
+        else
+        {
+            HidePanel();
+        }
+    }
 }

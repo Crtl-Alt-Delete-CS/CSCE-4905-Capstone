@@ -1,93 +1,135 @@
 using UnityEngine;
 
-/// <summary>
-/// Marks a GameObject (and everything under it) as one selectable organelle.
-/// Handles the visual highlight; selection logic lives in OrganelleSelectionManager.
-/// </summary>
 public class OrganelleTarget : MonoBehaviour
 {
-    [SerializeField] private string organelleName = "Organelle";
+    [Header("Organelle Info")]
+    [SerializeField] private string organelleName;
 
-    [Header("Highlight")]
-    [SerializeField] private Color highlightColor = new Color(1f, 0.85f, 0.1f);
-    [SerializeField, Range(0f, 5f)] private float emissionIntensity = 1.5f;
+    [TextArea(3, 6)]
+    public string description;
 
-    public string OrganelleName => organelleName;
+    public string[] descriptionPages;
+
+    [Header("Highlight Settings")]
+    [SerializeField] private Color highlightColor = new Color(1f, 0.85f, 0.2f, 1f);
+
+    public string OrganelleName => !string.IsNullOrEmpty(organelleName) ? organelleName : gameObject.name;
     public bool IsSelected { get; private set; }
-    public string[] Pages { get; private set; }
-    public string description => (Pages != null && Pages.Length > 0) ? Pages[0] : string.Empty;
 
-    private static readonly int EmissionColorId = Shader.PropertyToID("_EmissionColor");
+    public string[] DescriptionPages
+    {
+        get
+        {
+            if (descriptionPages != null && descriptionPages.Length > 0)
+                return descriptionPages;
+
+            if (!string.IsNullOrEmpty(description))
+                return description.Split(new[] { "\n\n", "|" }, System.StringSplitOptions.RemoveEmptyEntries);
+
+            return new[] { "No description available." };
+        }
+    }
 
     private Renderer[] _renderers;
-    private Material[][] _originalMaterials;
-    private Material[][] _highlightMaterials;
+    private Color[] _originalColors;
+    private static readonly int BaseColorProp = Shader.PropertyToID("_BaseColor");
+    private static readonly int ColorProp = Shader.PropertyToID("_Color");
 
-    public void Initialize(string displayName, string[] pages)
+    private void Awake()
     {
-        organelleName = displayName;
-        Pages = pages;
+        CacheRenderers();
+    }
+
+    /// <summary>
+    /// Overload accepting a single description string.
+    /// </summary>
+    public void Initialize(string title, string desc)
+    {
+        organelleName = title;
+        description = desc;
+        descriptionPages = !string.IsNullOrEmpty(desc)
+            ? desc.Split(new[] { "\n\n", "|" }, System.StringSplitOptions.RemoveEmptyEntries)
+            : new string[0];
+        CacheRenderers();
+    }
+
+    /// <summary>
+    /// Overload called by CellOrganelleSetup.cs (lines 109 and 113) accepting string[] pages.
+    /// </summary>
+    public void Initialize(string title, string[] pages)
+    {
+        organelleName = title;
+        descriptionPages = pages ?? new string[0];
+        description = (pages != null && pages.Length > 0) ? string.Join("\n\n", pages) : string.Empty;
+        CacheRenderers();
+    }
+
+    private void CacheRenderers()
+    {
+        _renderers = GetComponentsInChildren<Renderer>(true);
+        _originalColors = new Color[_renderers.Length];
+
+        for (int i = 0; i < _renderers.Length; i++)
+        {
+            Renderer r = _renderers[i];
+            if (r != null && r.sharedMaterial != null)
+            {
+                if (r.sharedMaterial.HasProperty(BaseColorProp))
+                    _originalColors[i] = r.sharedMaterial.GetColor(BaseColorProp);
+                else if (r.sharedMaterial.HasProperty(ColorProp))
+                    _originalColors[i] = r.sharedMaterial.GetColor(ColorProp);
+                else
+                    _originalColors[i] = Color.white;
+            }
+        }
     }
 
     public void SetSelected(bool selected)
     {
-        if (selected == IsSelected) return;
-
-        if (selected) ApplyHighlight();
-        else RemoveHighlight();
+        if (IsSelected == selected)
+            return;
 
         IsSelected = selected;
+
+        if (selected)
+            ApplyHighlight();
+        else
+            RemoveHighlight();
     }
 
     private void ApplyHighlight()
     {
-        // Search lazily: the highlighted organelle may be a group (e.g. a mitochondrion with two membranes).
-        _renderers = GetComponentsInChildren<Renderer>(true);
-        _originalMaterials = new Material[_renderers.Length][];
-        _highlightMaterials = new Material[_renderers.Length][];
+        if (_renderers == null)
+            CacheRenderers();
 
         for (int i = 0; i < _renderers.Length; i++)
         {
-            Material[] shared = _renderers[i].sharedMaterials;
-            var copies = new Material[shared.Length];
+            Renderer r = _renderers[i];
+            if (r == null || r.material == null)
+                continue;
 
-            for (int j = 0; j < shared.Length; j++)
-            {
-                if (shared[j] == null) continue;
-
-                // Instance copies so the shared cell materials (used by every other organelle) stay untouched.
-                var copy = new Material(shared[j]);
-                copy.EnableKeyword("_EMISSION");
-                copy.SetColor(EmissionColorId, highlightColor * emissionIntensity);
-                copies[j] = copy;
-            }
-
-            _originalMaterials[i] = shared;
-            _highlightMaterials[i] = copies;
-            _renderers[i].sharedMaterials = copies;
+            if (r.material.HasProperty(BaseColorProp))
+                r.material.SetColor(BaseColorProp, highlightColor);
+            else if (r.material.HasProperty(ColorProp))
+                r.material.SetColor(ColorProp, highlightColor);
         }
     }
 
     private void RemoveHighlight()
     {
-        if (_renderers == null) return;
+        if (_renderers == null || _originalColors == null)
+            return;
 
         for (int i = 0; i < _renderers.Length; i++)
         {
-            if (_renderers[i] != null)
-                _renderers[i].sharedMaterials = _originalMaterials[i];
+            Renderer r = _renderers[i];
+            if (r == null || r.material == null)
+                continue;
 
-            foreach (Material m in _highlightMaterials[i])
-                if (m != null) Destroy(m);
+            if (r.material.HasProperty(BaseColorProp))
+                r.material.SetColor(BaseColorProp, _originalColors[i]);
+            else if (r.material.HasProperty(ColorProp))
+                r.material.SetColor(ColorProp, _originalColors[i]);
         }
-
-        _renderers = null;
-        _originalMaterials = null;
-        _highlightMaterials = null;
-    }
-
-    private void OnDestroy()
-    {
-        if (IsSelected) RemoveHighlight();
     }
 }

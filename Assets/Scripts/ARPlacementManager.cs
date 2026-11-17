@@ -235,50 +235,44 @@ public class ARPlacementManager : MonoBehaviour
     /// Turns exactly one spawn system on. Image tracking (QR codes) and plane placement
     /// (tap/click to place) are never enabled together.
     /// </summary>
-    private void ApplyMode()
+    public void ApplyMode()
+{
+    bool images = arExperienceActive && mode == ARMode.ImageTracking;
+    bool planes = arExperienceActive && mode == ARMode.PlanePlacement;
+
+    if (imageManager != null)
     {
-        bool images = arExperienceActive && mode == ARMode.ImageTracking;
-        bool planes = arExperienceActive && mode == ARMode.PlanePlacement;
-
-        if (imageManager != null)
+        imageManager.enabled = images;
+        foreach (var trackedImage in imageManager.trackables)
         {
-            imageManager.enabled = images;
-            foreach (var trackedImage in imageManager.trackables)
-                if (trackedImage != null)
-                    trackedImage.gameObject.SetActive(images);
-        }
-
-        if (planeManager != null)
-        {
-            planeManager.enabled = planes;
-            foreach (var plane in planeManager.trackables)
-                if (plane != null)
-                    plane.gameObject.SetActive(planes);
-        }
-
-        if (raycastManager != null)
-            raycastManager.enabled = planes;
-
-        if (cellInteraction != null)
-        {
-            // 1. Tell interaction whether plane taps are allowed
-            cellInteraction.canPlace = planes;
-
-            // 2. Switching away from Plane Placement: destroy the placed cell
-            if (!planes)
-            {
-                cellInteraction.ClearSpawned();
-            }
-            // 3. Switching into Plane Placement from Image Tracking: release any active QR cell reference
-            else if (cellInteraction.isTrackedImage)
-            {
-                cellInteraction.ClearSpawned();
-            }
-
-            // Keep enabled so rotating, scaling, and organelle tapping continue working
-            cellInteraction.enabled = true;
+            if (trackedImage != null)
+                trackedImage.gameObject.SetActive(images);
         }
     }
+
+    if (planeManager != null)
+    {
+        planeManager.enabled = planes;
+        foreach (var plane in planeManager.trackables)
+        {
+            if (plane != null)
+                plane.gameObject.SetActive(planes);
+        }
+    }
+
+    if (raycastManager != null)
+        raycastManager.enabled = planes;
+
+    if (cellInteraction == null)
+        cellInteraction = FindAnyObjectByType<ARCellInteraction>();
+
+    if (cellInteraction != null)
+    {
+        cellInteraction.canPlace = planes;
+        cellInteraction.ClearSpawned();
+        cellInteraction.enabled = true;
+    }
+}
 
     private void SetARExperienceActive(bool active)
     {
