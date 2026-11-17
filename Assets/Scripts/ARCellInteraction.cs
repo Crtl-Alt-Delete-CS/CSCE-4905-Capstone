@@ -5,6 +5,7 @@ using UnityEngine.XR.ARFoundation;
 using UnityEngine.XR.ARSubsystems;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.EnhancedTouch;
+
 using Touch = UnityEngine.InputSystem.EnhancedTouch.Touch;
 using TouchPhase = UnityEngine.InputSystem.TouchPhase;
 
@@ -16,7 +17,7 @@ public class ARCellInteraction : MonoBehaviour
     [SerializeField] private ARPlaneManager planeManager;
     [SerializeField] private Camera arCamera;
 
-    [Header("Scale Boundaries (Meters)")]
+    [Header("Scale Boundaries")]
     [SerializeField] private float initialScale = 0.1f;
     [SerializeField] private float minScale = 0.03f;
     [SerializeField] private float maxScale = 0.5f;
@@ -34,43 +35,70 @@ public class ARCellInteraction : MonoBehaviour
     public bool canPlace = false;
 
     private GameObject spawnedObject;
-    private static readonly List<ARRaycastHit> hits = new List<ARRaycastHit>();
+
+    private static readonly List<ARRaycastHit> hits =
+        new List<ARRaycastHit>();
+
+    private readonly List<RaycastResult> uiHits =
+        new List<RaycastResult>();
 
     private Quaternion resetRotation;
+    private Vector3 resetScale;
+
     private bool blockGestureUntilRelease;
-    private readonly List<RaycastResult> uiHits = new List<RaycastResult>();
+    private bool isDragging;
+    private bool suppressTap;
+
+    private Vector2 touchStartPos;
+
+    private const float TapMovementThreshold = 15f;
+
+    public bool isTrackedImage = false;
 
     public string StatusMessage { get; private set; } =
         "Choose a cell, then tap a detected surface.";
 
-    private bool isDragging = false;
-    private Vector2 touchStartPos;
-    private const float TapMovementThreshold = 15f;
-    private bool suppressTap = false;
-
-    public bool isTrackedImage = false;
-
-    public void SetSpawnedObject(GameObject obj)
-    {
-        if (spawnedObject != null && !isTrackedImage && spawnedObject != obj)
-        {
-            Destroy(spawnedObject);
-        }
-
-        spawnedObject = obj;
-        isTrackedImage = (obj != null);
-    }
+    // =====================================================
+    // SETUP
+    // =====================================================
 
     private void Awake()
     {
         if (raycastManager == null)
-            raycastManager = GetComponent<ARRaycastManager>();
+        {
+            raycastManager =
+                GetComponent<ARRaycastManager>();
+        }
+
+        if (raycastManager == null)
+        {
+            raycastManager =
+                FindFirstObjectByType<ARRaycastManager>();
+        }
 
         if (planeManager == null)
-            planeManager = GetComponent<ARPlaneManager>();
+        {
+            planeManager =
+                GetComponent<ARPlaneManager>();
+        }
+
+        if (planeManager == null)
+        {
+            planeManager =
+                FindFirstObjectByType<ARPlaneManager>();
+        }
 
         if (arCamera == null)
+        {
             arCamera = Camera.main;
+        }
+
+        // Default to Animal if no starting prefab was assigned.
+        if (cellPrefab == null &&
+            animalCellPrefab != null)
+        {
+            cellPrefab = animalCellPrefab;
+        }
     }
 
     private void OnEnable()
@@ -82,6 +110,66 @@ public class ARCellInteraction : MonoBehaviour
     {
         EnhancedTouchSupport.Disable();
     }
+
+    // =====================================================
+    // QR TRACKING SUPPORT
+    // =====================================================
+
+    public void SetSpawnedObject(GameObject obj)
+    {
+        // If a plane-placed cell is active and QR mode takes over,
+        // remove the plane cell first.
+        if (spawnedObject != null &&
+            !isTrackedImage &&
+            spawnedObject != obj)
+        {
+            spawnedObject.SetActive(false);
+            Destroy(spawnedObject);
+        }
+
+        spawnedObject = obj;
+        isTrackedImage = obj != null;
+
+        if (spawnedObject != null)
+        {
+            resetRotation =
+                spawnedObject.transform.rotation;
+
+            resetScale =
+                spawnedObject.transform.localScale;
+        }
+    }
+
+    public void ClearSpawned()
+    {
+        if (spawnedObject != null)
+        {
+            if (OrganelleSelectionManager.Instance != null)
+            {
+                OrganelleSelectionManager.Instance
+                    .ClearSelection();
+            }
+
+            // QR cells are children of the tracked-image prefab,
+            // so do not destroy them here.
+            if (!isTrackedImage)
+            {
+                spawnedObject.SetActive(false);
+                Destroy(spawnedObject);
+            }
+        }
+
+        spawnedObject = null;
+
+        isTrackedImage = false;
+        isDragging = false;
+        suppressTap = false;
+        blockGestureUntilRelease = false;
+    }
+
+    // =====================================================
+    // INPUT
+    // =====================================================
 
     private void Update()
     {
@@ -98,41 +186,61 @@ public class ARCellInteraction : MonoBehaviour
             }
         }
 
-        bool mouseHeld = Mouse.current != null &&
-            (Mouse.current.leftButton.isPressed ||
-             Mouse.current.middleButton.isPressed);
+        bool mouseHeld =
+            Mouse.current != null &&
+            (
+                Mouse.current.leftButton.isPressed ||
+                Mouse.current.middleButton.isPressed
+            );
 
-        if (activeTouches.Count == 0 && Mouse.current != null)
+        if (activeTouches.Count == 0 &&
+            Mouse.current != null)
         {
-            pointerOverUI = IsOverUI(
-                Mouse.current.position.ReadValue());
+            pointerOverUI =
+                IsOverUI(
+                    Mouse.current.position.ReadValue());
         }
 
-        if (pointerOverUI && (activeTouches.Count > 0 || mouseHeld))
+        // If a UI button started the gesture,
+        // do not let that same gesture reach the AR world.
+        if (pointerOverUI &&
+            (activeTouches.Count > 0 || mouseHeld))
+        {
             blockGestureUntilRelease = true;
+        }
 
         if (blockGestureUntilRelease)
         {
             isDragging = false;
             suppressTap = true;
 
-            if (activeTouches.Count == 0 && !mouseHeld)
+            if (activeTouches.Count == 0 &&
+                !mouseHeld)
+            {
                 blockGestureUntilRelease = false;
+            }
 
             return;
         }
 
         if (pointerOverUI)
+        {
             return;
+        }
 
-        // MOBILE 1-FINGER TOUCH
+        // =================================================
+        // MOBILE - ONE FINGER
+        // =================================================
+
         if (activeTouches.Count == 1)
         {
             var touch = activeTouches[0];
 
             if (touch.phase == TouchPhase.Began)
             {
-                touchStartPos = touch.screenPosition;
+                touchStartPos =
+                    touch.screenPosition;
+
                 isDragging = false;
                 suppressTap = false;
 
@@ -142,29 +250,39 @@ public class ARCellInteraction : MonoBehaviour
                 {
                     PlaceOrMove(
                         touch.screenPosition,
-                        isInitialSpawn: true);
+                        true);
 
                     suppressTap = true;
                 }
             }
-            else if (touch.phase == TouchPhase.Moved &&
-                     spawnedObject != null)
+
+            else if (
+                touch.phase == TouchPhase.Moved &&
+                spawnedObject != null)
             {
+                float movement =
+                    (
+                        touch.screenPosition -
+                        touchStartPos
+                    ).magnitude;
+
                 if (!isDragging &&
-                    (touch.screenPosition - touchStartPos).magnitude >
-                    TapMovementThreshold)
+                    movement > TapMovementThreshold)
                 {
                     isDragging = true;
                 }
 
-                if (isDragging && !isTrackedImage)
+                if (isDragging &&
+                    !isTrackedImage)
                 {
                     PlaceOrMove(
                         touch.screenPosition,
-                        isInitialSpawn: false);
+                        false);
                 }
             }
-            else if (touch.phase == TouchPhase.Ended)
+
+            else if (
+                touch.phase == TouchPhase.Ended)
             {
                 if (!isDragging &&
                     !suppressTap &&
@@ -180,34 +298,50 @@ public class ARCellInteraction : MonoBehaviour
             }
         }
 
-        // MOBILE 2-FINGER TOUCH: PINCH & ROTATE
-        else if (activeTouches.Count == 2 &&
-                 spawnedObject != null)
+        // =================================================
+        // MOBILE - TWO FINGERS
+        // =================================================
+
+        else if (
+            activeTouches.Count == 2 &&
+            spawnedObject != null)
         {
             var touch0 = activeTouches[0];
             var touch1 = activeTouches[1];
 
             suppressTap = true;
 
-            Vector2 prevPos0 =
-                touch0.screenPosition - touch0.delta;
+            Vector2 previousPosition0 =
+                touch0.screenPosition -
+                touch0.delta;
 
-            Vector2 prevPos1 =
-                touch1.screenPosition - touch1.delta;
+            Vector2 previousPosition1 =
+                touch1.screenPosition -
+                touch1.delta;
 
-            float prevDist =
-                (prevPos0 - prevPos1).magnitude;
+            float previousDistance =
+                (
+                    previousPosition0 -
+                    previousPosition1
+                ).magnitude;
 
-            float curDist =
-                (touch0.screenPosition -
-                 touch1.screenPosition).magnitude;
+            float currentDistance =
+                (
+                    touch0.screenPosition -
+                    touch1.screenPosition
+                ).magnitude;
 
             float factor =
-                curDist /
-                (prevDist <= 0.001f ? 1f : prevDist);
+                currentDistance /
+                (
+                    previousDistance <= 0.001f
+                        ? 1f
+                        : previousDistance
+                );
 
             Vector3 targetScale =
-                spawnedObject.transform.localScale * factor;
+                spawnedObject.transform.localScale *
+                factor;
 
             float clampedScale =
                 Mathf.Clamp(
@@ -218,17 +352,18 @@ public class ARCellInteraction : MonoBehaviour
             spawnedObject.transform.localScale =
                 Vector3.one * clampedScale;
 
-            Vector2 prevDir =
-                prevPos1 - prevPos0;
+            Vector2 previousDirection =
+                previousPosition1 -
+                previousPosition0;
 
-            Vector2 curDir =
+            Vector2 currentDirection =
                 touch1.screenPosition -
                 touch0.screenPosition;
 
             float angleDelta =
                 Vector2.SignedAngle(
-                    prevDir,
-                    curDir);
+                    previousDirection,
+                    currentDirection);
 
             spawnedObject.transform.Rotate(
                 Vector3.up,
@@ -236,39 +371,53 @@ public class ARCellInteraction : MonoBehaviour
                 Space.World);
         }
 
-        // EDITOR / PC MOUSE INPUT
+        // =================================================
+        // EDITOR / PC
+        // =================================================
+
         else if (Mouse.current != null)
         {
-            Vector2 mousePos =
+            Vector2 mousePosition =
                 Mouse.current.position.ReadValue();
 
             Vector2 mouseDelta =
                 Mouse.current.delta.ReadValue();
 
-            bool isRotateKeyPressed =
+            bool rotateKeyPressed =
                 Keyboard.current != null &&
                 Keyboard.current.rKey.isPressed;
 
-            bool isMiddleMouseDragging =
+            bool middleMouseDragging =
                 Mouse.current.middleButton.isPressed;
 
+            // Rotate:
+            // Middle mouse OR R + left mouse.
             if (spawnedObject != null &&
-                (isMiddleMouseDragging ||
-                 (isRotateKeyPressed &&
-                  Mouse.current.leftButton.isPressed)))
+                (
+                    middleMouseDragging ||
+                    (
+                        rotateKeyPressed &&
+                        Mouse.current.leftButton.isPressed
+                    )
+                ))
             {
                 suppressTap = true;
 
-                float rotationSpeed = 0.4f;
+                const float rotationSpeed = 0.4f;
 
                 spawnedObject.transform.Rotate(
                     Vector3.up,
                     -mouseDelta.x * rotationSpeed,
                     Space.World);
             }
-            else if (Mouse.current.leftButton.wasPressedThisFrame)
+
+            else if (
+                Mouse.current.leftButton
+                    .wasPressedThisFrame)
             {
-                touchStartPos = mousePos;
+                touchStartPos =
+                    mousePosition;
+
                 isDragging = false;
                 suppressTap = false;
 
@@ -277,37 +426,49 @@ public class ARCellInteraction : MonoBehaviour
                     !IsOverUI(-1))
                 {
                     PlaceOrMove(
-                        mousePos,
-                        isInitialSpawn: true);
+                        mousePosition,
+                        true);
 
                     suppressTap = true;
                 }
             }
-            else if (Mouse.current.leftButton.isPressed &&
-                     spawnedObject != null)
+
+            else if (
+                Mouse.current.leftButton.isPressed &&
+                spawnedObject != null)
             {
+                float movement =
+                    (
+                        mousePosition -
+                        touchStartPos
+                    ).magnitude;
+
                 if (!isDragging &&
-                    (mousePos - touchStartPos).magnitude >
+                    movement >
                     TapMovementThreshold)
                 {
                     isDragging = true;
                 }
 
-                if (isDragging && !isTrackedImage)
+                if (isDragging &&
+                    !isTrackedImage)
                 {
                     PlaceOrMove(
-                        mousePos,
-                        isInitialSpawn: false);
+                        mousePosition,
+                        false);
                 }
             }
-            else if (Mouse.current.leftButton.wasReleasedThisFrame)
+
+            else if (
+                Mouse.current.leftButton
+                    .wasReleasedThisFrame)
             {
                 if (!isDragging &&
                     !suppressTap &&
                     spawnedObject != null)
                 {
                     HandleScreenTap(
-                        mousePos,
+                        mousePosition,
                         -1);
                 }
 
@@ -323,7 +484,9 @@ public class ARCellInteraction : MonoBehaviour
             {
                 float newScale =
                     Mathf.Clamp(
-                        spawnedObject.transform.localScale.x +
+                        spawnedObject
+                            .transform
+                            .localScale.x +
                         (scroll * 0.005f),
                         minScale,
                         maxScale);
@@ -334,150 +497,129 @@ public class ARCellInteraction : MonoBehaviour
         }
     }
 
-    private static bool IsOverUI(int pointerId)
-    {
-        if (EventSystem.current == null)
-            return false;
-
-        if (pointerId >= 0 &&
-            EventSystem.current.IsPointerOverGameObject(pointerId))
-            return true;
-
-        return EventSystem.current.IsPointerOverGameObject();
-    }
-
-    public void ClearSpawned()
-    {
-        if (spawnedObject != null)
-        {
-            OrganelleSelectionManager.Instance.ClearSelection();
-
-            if (!isTrackedImage)
-            {
-                Destroy(spawnedObject);
-            }
-        }
-
-        spawnedObject = null;
-        isTrackedImage = false;
-        isDragging = false;
-        suppressTap = false;
-    }
-
-    private void HandleScreenTap(
-        Vector2 screenPosition,
-        int pointerId)
-    {
-        if (IsOverUI(pointerId))
-            return;
-
-        OrganelleSelectionManager.Instance
-            .TrySelectAtScreenPoint(
-                screenPosition,
-                arCamera);
-    }
-
-    private void PlaceOrMove(
-        Vector2 screenPosition,
-        bool isInitialSpawn)
-    {
-        if (raycastManager.Raycast(
-            screenPosition,
-            hits,
-            TrackableType.PlaneWithinPolygon))
-        {
-            Pose hitPose = hits[0].pose;
-
-            Vector3 targetPos =
-                hitPose.position +
-                (Vector3.up * verticalOffset);
-
-            if (isInitialSpawn)
-            {
-                spawnedObject =
-                    Instantiate(
-                        cellPrefab,
-                        targetPos,
-                        hitPose.rotation);
-
-                spawnedObject.transform.localScale =
-                    Vector3.one * initialScale;
-
-                isTrackedImage = false;
-
-                resetRotation =
-                    spawnedObject.transform.rotation;
-
-                StatusMessage =
-                    "Cell placed. Drag, zoom, or rotate to explore.";
-
-                if (spawnedObject
-                    .GetComponent<CellOrganelleSetup>() == null)
-                {
-                    spawnedObject
-                        .AddComponent<CellOrganelleSetup>();
-                }
-            }
-            else
-            {
-                spawnedObject.transform.position =
-                    targetPos;
-            }
-        }
-    }
+    // =====================================================
+    // CELL SELECTION
+    // =====================================================
 
     public void SelectAnimalCell()
-        => SelectCell(animalCellPrefab);
+    {
+        SelectCell(animalCellPrefab);
+    }
 
     public void SelectPlantCell()
-        => SelectCell(plantCellPrefab);
+    {
+        SelectCell(plantCellPrefab);
+    }
 
     public void SelectBacterialCell()
-        => SelectCell(bacterialCellPrefab);
+    {
+        SelectCell(bacterialCellPrefab);
+    }
 
     public void SelectFungalCell()
-        => SelectCell(fungalCellPrefab);
+    {
+        SelectCell(fungalCellPrefab);
+    }
 
-    public void SelectCell(GameObject selectedPrefab)
+    public void SelectCell(
+        GameObject selectedPrefab)
     {
         BlockCurrentGesture();
 
         if (selectedPrefab == null)
         {
             StatusMessage =
-                "Assign this cell's prefab in the Inspector.";
+                "Selected cell prefab is missing.";
 
-            Debug.LogWarning(
+            Debug.LogError(
                 StatusMessage,
                 this);
 
             return;
         }
 
-        OrganelleSelectionManager.Instance
-            .ClearSelection();
+        Debug.Log(
+            "Selected cell: " +
+            selectedPrefab.name,
+            this);
 
+        if (OrganelleSelectionManager.Instance != null)
+        {
+            OrganelleSelectionManager.Instance
+                .ClearSelection();
+        }
+
+        // This becomes the prefab used by plane placement.
         cellPrefab = selectedPrefab;
 
+        // If nothing is placed, simply remember the choice.
         if (spawnedObject == null)
         {
             StatusMessage =
-                "Cell selected. Tap a detected surface to place it.";
+                "Selected " +
+                selectedPrefab.name +
+                ". Tap a surface to place it.";
 
             return;
         }
 
+        // Sidebar selection should happen in Plane Placement.
+        // If a QR cell is still registered, release our
+        // reference to it rather than destroying its child.
+        if (isTrackedImage)
+        {
+            spawnedObject = null;
+            isTrackedImage = false;
+
+            StatusMessage =
+                "Selected " +
+                selectedPrefab.name +
+                ". Tap a surface to place it.";
+
+            return;
+        }
+
+        // Replace the existing plane cell immediately.
         Vector3 position =
             spawnedObject.transform.position;
 
         Quaternion rotation =
             spawnedObject.transform.rotation;
 
-        Vector3 scale =
-            spawnedObject.transform.localScale;
-
         spawnedObject.SetActive(false);
         Destroy(spawnedObject);
+
+        spawnedObject = null;
+
+        SpawnPlaneCell(
+            position,
+            rotation);
+
+        StatusMessage =
+            "Switched to " +
+            selectedPrefab.name +
+            ".";
+    }
+
+    // =====================================================
+    // PLANE PLACEMENT
+    // =====================================================
+
+    private void SpawnPlaneCell(
+        Vector3 position,
+        Quaternion rotation)
+    {
+        if (cellPrefab == null)
+        {
+            StatusMessage =
+                "Choose a cell before placing it.";
+
+            Debug.LogError(
+                "Cannot spawn cell because cellPrefab is null.",
+                this);
+
+            return;
+        }
 
         spawnedObject =
             Instantiate(
@@ -485,18 +627,88 @@ public class ARCellInteraction : MonoBehaviour
                 position,
                 rotation);
 
+        isTrackedImage = false;
+
+        // Every plane-placed cell begins at the configured AR scale.
         spawnedObject.transform.localScale =
-            scale;
+            Vector3.one * initialScale;
+
+        // Save this cell's original transform for Reset.
+        resetRotation =
+            spawnedObject.transform.rotation;
+
+        resetScale =
+            spawnedObject.transform.localScale;
 
         if (spawnedObject
-            .GetComponent<CellOrganelleSetup>() == null)
+                .GetComponent<CellOrganelleSetup>()
+            == null)
         {
             spawnedObject
                 .AddComponent<CellOrganelleSetup>();
         }
 
-        StatusMessage = "Cell switched.";
+        Debug.Log(
+            "Spawned " +
+            spawnedObject.name +
+            " at " +
+            position,
+            this);
     }
+
+    private void PlaceOrMove(
+        Vector2 screenPosition,
+        bool isInitialSpawn)
+    {
+        if (raycastManager == null)
+        {
+            Debug.LogError(
+                "ARRaycastManager is missing.",
+                this);
+
+            return;
+        }
+
+        if (!raycastManager.Raycast(
+            screenPosition,
+            hits,
+            TrackableType.PlaneWithinPolygon))
+        {
+            return;
+        }
+
+        Pose hitPose =
+            hits[0].pose;
+
+        Vector3 targetPosition =
+            hitPose.position +
+            Vector3.up * verticalOffset;
+
+        if (isInitialSpawn)
+        {
+            SpawnPlaneCell(
+                targetPosition,
+                hitPose.rotation);
+
+            if (spawnedObject != null)
+            {
+                StatusMessage =
+                    "Cell placed. Drag, zoom, or rotate to explore.";
+            }
+        }
+
+        else if (
+            spawnedObject != null &&
+            !isTrackedImage)
+        {
+            spawnedObject.transform.position =
+                targetPosition;
+        }
+    }
+
+    // =====================================================
+    // RESET
+    // =====================================================
 
     public void ResetCell()
     {
@@ -510,18 +722,38 @@ public class ARCellInteraction : MonoBehaviour
             return;
         }
 
-        OrganelleSelectionManager.Instance
-            .ClearSelection();
+        if (isTrackedImage)
+        {
+            StatusMessage =
+                "Reset is only available in plane placement mode.";
+
+            return;
+        }
+
+        if (OrganelleSelectionManager.Instance != null)
+        {
+            OrganelleSelectionManager.Instance
+                .ClearSelection();
+        }
 
         spawnedObject.transform.rotation =
             resetRotation;
 
         spawnedObject.transform.localScale =
-            Vector3.one * initialScale;
+            resetScale;
 
         StatusMessage =
             "Cell size and rotation reset.";
+
+        Debug.Log(
+            "Reset " +
+            spawnedObject.name,
+            this);
     }
+
+    // =====================================================
+    // RECENTER
+    // =====================================================
 
     public void RecenterCell()
     {
@@ -531,6 +763,14 @@ public class ARCellInteraction : MonoBehaviour
         {
             StatusMessage =
                 "Place a cell first.";
+
+            return;
+        }
+
+        if (isTrackedImage)
+        {
+            StatusMessage =
+                "Recenter is only available in plane placement mode.";
 
             return;
         }
@@ -563,8 +803,11 @@ public class ARCellInteraction : MonoBehaviour
             return;
         }
 
-        OrganelleSelectionManager.Instance
-            .ClearSelection();
+        if (OrganelleSelectionManager.Instance != null)
+        {
+            OrganelleSelectionManager.Instance
+                .ClearSelection();
+        }
 
         spawnedObject.transform.position =
             hits[0].pose.position +
@@ -574,31 +817,96 @@ public class ARCellInteraction : MonoBehaviour
             "Cell re-centered.";
     }
 
+    // =====================================================
+    // CLEAR
+    // =====================================================
+
     public void ClearCell()
     {
         BlockCurrentGesture();
 
-        OrganelleSelectionManager.Instance
-            .ClearSelection();
+        if (OrganelleSelectionManager.Instance != null)
+        {
+            OrganelleSelectionManager.Instance
+                .ClearSelection();
+        }
 
         if (spawnedObject != null)
         {
-            spawnedObject.SetActive(false);
-            Destroy(spawnedObject);
+            // QR cells belong to the tracked image object.
+            if (!isTrackedImage)
+            {
+                spawnedObject.SetActive(false);
+                Destroy(spawnedObject);
+            }
+
             spawnedObject = null;
         }
 
+        isTrackedImage = false;
+        isDragging = false;
+        suppressTap = false;
+
         StatusMessage =
             "Cell cleared. Tap a detected surface to place it again.";
+    }
+
+    // =====================================================
+    // ORGANELLE TAP
+    // =====================================================
+
+    private void HandleScreenTap(
+        Vector2 screenPosition,
+        int pointerId)
+    {
+        if (IsOverUI(pointerId))
+        {
+            return;
+        }
+
+        if (OrganelleSelectionManager.Instance == null)
+        {
+            return;
+        }
+
+        OrganelleSelectionManager.Instance
+            .TrySelectAtScreenPoint(
+                screenPosition,
+                arCamera);
+    }
+
+    // =====================================================
+    // UI DETECTION
+    // =====================================================
+
+    private static bool IsOverUI(
+        int pointerId)
+    {
+        if (EventSystem.current == null)
+        {
+            return false;
+        }
+
+        if (pointerId >= 0 &&
+            EventSystem.current
+                .IsPointerOverGameObject(pointerId))
+        {
+            return true;
+        }
+
+        return EventSystem.current
+            .IsPointerOverGameObject();
     }
 
     private bool IsOverUI(
         Vector2 screenPosition)
     {
         if (EventSystem.current == null)
+        {
             return false;
+        }
 
-        var pointer =
+        PointerEventData pointer =
             new PointerEventData(
                 EventSystem.current)
             {
@@ -611,7 +919,7 @@ public class ARCellInteraction : MonoBehaviour
             pointer,
             uiHits);
 
-        foreach (var hit in uiHits)
+        foreach (RaycastResult hit in uiHits)
         {
             if (hit.module is
                 UnityEngine.UI.GraphicRaycaster)

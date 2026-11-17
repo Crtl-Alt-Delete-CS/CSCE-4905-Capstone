@@ -428,6 +428,8 @@ MonoBehaviour:
   resetButton: {fileID: 1985692188}
   recenterButton: {fileID: 1521606407}
   clearButton: {fileID: 577032042}
+  cellInteraction: {fileID: 2100060285}
+  modeButton: {fileID: 0}
 --- !u!114 &185887142
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3639,7 +3641,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 2100060285}
         m_TargetAssemblyTypeName: ARCellInteraction, Assembly-CSharp
-        m_MethodName: ResetCell
+        m_MethodName: ClearCell
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -4094,6 +4096,8 @@ MonoBehaviour:
   plantCellPrefab: {fileID: 1205969349561346, guid: fb59502e77ab27b46a6b6572969726fd, type: 3}
   bacterialCellPrefab: {fileID: 1911774418819468, guid: bd632f6310a4e5442bc4918cbeee995b, type: 3}
   fungalCellPrefab: {fileID: 1826376343110636, guid: f04334d74d40ef547876bcb8d7a7b9ab, type: 3}
+  canPlace: 0
+  isTrackedImage: 0
 --- !u!114 &2100060286
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4113,6 +4117,7 @@ MonoBehaviour:
   planeManager: {fileID: 0}
   arSession: {fileID: 0}
   arCameraManager: {fileID: 0}
+  cellControlsPanel: {fileID: 0}
 --- !u!114 &2100060287
 MonoBehaviour:
   m_ObjectHideFlags: 0
