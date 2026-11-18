@@ -7332,6 +7332,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4882593337826282}
+  - component: {fileID: 5285099580894766590}
   m_Layer: 0
   m_Name: Flagellum
   m_TagString: Untagged
@@ -7359,6 +7360,29 @@ Transform:
   - {fileID: 4806926869698052}
   m_Father: {fileID: 4504719856129350}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &5285099580894766590
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1393920781376030}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a07957c9f93775845a1d82728a668f72, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::OrganelleData
+  organelleName: Flagellum
+  pages:
+  - (pronounced fluh-JEL-um) Just like a speedboat needs a spinning propeller at the back to push it through the water, some single-celled organisms need a built-in motor to help them swim. That microscopic motor is called a flagellum!
+  - 'What Do They Do? The flagellum has one main job: movement! It whips back and forth or spins around like a tiny propeller, pushing the cell forward so it can swim through liquids to find food or escape from danger.'
+  - 'The purpose of its structure: The flagellum looks like a long, thin whip or a tail sticking out of the back of the cell. It is long and flexible so it can generate enough whipping force to push the entire heavy cell forward through the water.'
+  - 'Fun Fact: While you mostly find them on single-celled bacteria, human bodies have them too! The only human cell that has a flagellum is a sperm cell, which uses its tail to swim.'
+  pageAudioClips:
+  - {fileID: 8300000, guid: 37663c977a50c714abd4fe09eb67d5c2, type: 3}
+  - {fileID: 8300000, guid: 11c76fb3633994d44943837fcd85c916, type: 3}
+  - {fileID: 8300000, guid: 2e5eff0749d71874c9205a3ff7a3106a, type: 3}
+  - {fileID: 8300000, guid: 27084edda81b65946ab46ef9c5dea457, type: 3}
 --- !u!1 &1400918579826500
 GameObject:
   m_ObjectHideFlags: 0
@@ -8628,6 +8652,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4483365134666640}
+  - component: {fileID: 3921299279689484960}
   m_Layer: 0
   m_Name: Mesosome
   m_TagString: Untagged
@@ -8654,6 +8679,29 @@ Transform:
   - {fileID: 4660625054147748}
   m_Father: {fileID: 4504719856129350}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &3921299279689484960
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1450375040903662}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a07957c9f93775845a1d82728a668f72, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::OrganelleData
+  organelleName: Mesosome
+  pages:
+  - (pronounced MEZ-uh-sohm) Just like a crumpled piece of paper has more wrinkles and folds than a flat one, a bacteria cell sometimes needs extra folded space inside to get its work done. That folded area is called a mesosome!
+  - What Do They Do? The mesosome acts like an extra workspace for the bacteria cell. It helps the cell with "breathing" (making energy) and also gives the cell a safe spot to organize its DNA when it is getting ready to divide into two new cells.
+  - 'The purpose of its structure: A mesosome looks like a wrinkly, inward-folded pocket on the cell''s outer skin. This folded shape is important because all those twists and wrinkles create much more "surface area" (working room) for the cell to build energy, without making the cell itself any bigger!'
+  - 'Fun Fact: For a long time, scientists thought mesosomes were huge, complicated organelles. But years later, they realized the harsh chemicals they used to prepare the slides for their powerful microscopes were actually causing the bacteria cells to shrink and wrinkle up by accident!'
+  pageAudioClips:
+  - {fileID: 8300000, guid: ac7b9a8a61c21864c954e2597b963788, type: 3}
+  - {fileID: 8300000, guid: 6b3ec7c498029b54a842a7f6a52f13a3, type: 3}
+  - {fileID: 8300000, guid: da2ed30a876e384478b8c01ca484bee4, type: 3}
+  - {fileID: 8300000, guid: 2c0ef69a3ede36f49ba962a25a93596d, type: 3}
 --- !u!1 &1450660760666274
 GameObject:
   m_ObjectHideFlags: 0
@@ -8933,6 +8981,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4635063304822130}
+  - component: {fileID: 960978880809104044}
   m_Layer: 0
   m_Name: IncorporationOf
   m_TagString: Untagged
@@ -8979,6 +9028,29 @@ Transform:
   - {fileID: 4034382698053284}
   m_Father: {fileID: 4504719856129350}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &960978880809104044
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1459759839434454}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a07957c9f93775845a1d82728a668f72, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::OrganelleData
+  organelleName: 'Cell Inclusions '
+  pages:
+  - (pronounced in-KLOO-zhuns) Just like a house needs a pantry or a closet to store extra food and supplies for later, a cell needs a place to stash its leftovers. Those tiny storage spots are called cell inclusions!
+  - What Do They Do? Inclusions are simply clumps of stored materials waiting to be used. Sometimes they hold extra fat or sugar for the cell to use as a quick snack when it needs energy. Other times, they hold special chemicals, like the pigments that give your hair and eyes their color.
+  - 'The purpose of its structure: These inclusions look like simple, little floating blobs, drops, or grains scattered around the empty space of the cell. Because their only job is to hold stuff, they don''t need a complicated maze or a thick vault like other organelles. They are just tightly packed drops of material, which is the perfect shape for taking up as little room as possible while they wait to be used.'
+  - 'Fun Fact: If you eat more sugar than your body needs right away, your liver and muscle cells will pack that extra sugar tightly together into special inclusions called "glycogen." This acts like a secret backup battery, giving you a sudden burst of energy for your next gym class or recess!'
+  pageAudioClips:
+  - {fileID: 8300000, guid: 9eaba123a1cc62146ad068e971a35e63, type: 3}
+  - {fileID: 8300000, guid: ea4487fb5d3b98140a8bfa3a872f198c, type: 3}
+  - {fileID: 8300000, guid: 61ee6cdd5c0e8b44b94e7c8fa0553e2e, type: 3}
+  - {fileID: 8300000, guid: 24370c8ff84ea6c48a6532147c1734df, type: 3}
 --- !u!1 &1460259854756068
 GameObject:
   m_ObjectHideFlags: 0
@@ -11359,6 +11431,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4515269602883890}
+  - component: {fileID: 1938014449694814145}
   m_Layer: 0
   m_Name: Ribosome
   m_TagString: Untagged
@@ -11541,6 +11614,29 @@ Transform:
   - {fileID: 4800644308843394}
   m_Father: {fileID: 4504719856129350}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1938014449694814145
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1545386043075372}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a07957c9f93775845a1d82728a668f72, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::OrganelleData
+  organelleName: Ribosome
+  pages:
+  - (pronounced RYE-buh-sohm) Just like a construction site needs workers to read blueprints and build, a bacterial cell needs tiny workers to build the tools it needs to survive. Those tiny, hard-working builders are called ribosomes!
+  - 'What Do They Do? Ribosomes are the protein builders of the cell. Because a bacteria does not have a nucleus to lock away its DNA, the instruction manuals just float right over to the ribosomes. The ribosome reads these instructions like a recipe card and snaps smaller pieces together to build proteins. These proteins are used to build the bacteria''s armor, fix its flagellum motor, and keep it alive! '
+  - 'The purpose of its structure: Ribosomes look like tiny little dots or seeds floating freely all around the cell''s fluid. Even though they look simple, they are made of two separate puzzle pieces (a top piece and a bottom piece) that clamp perfectly together around the recipe card to read it. Because they are so incredibly small, a tiny bacterial cell can pack tens of thousands of them inside to get lots of building done at once.'
+  - 'Fun Fact: Bacterial ribosomes are actually a little bit smaller and shaped differently than the ones inside human cells! This is a secret weapon for doctors. When you get sick and take antibiotics, the medicine is specially designed to attack only the smaller bacterial ribosomes. This stops the germs from building proteins, without hurting your own human ribosomes at all!'
+  pageAudioClips:
+  - {fileID: 8300000, guid: 9fca5bc08d44ae345a14152315ce83a5, type: 3}
+  - {fileID: 8300000, guid: 64b2bc2b7053a864b94b54158dd02329, type: 3}
+  - {fileID: 8300000, guid: f2a0c583e5e831b42b722d087a67fee4, type: 3}
+  - {fileID: 8300000, guid: 0b64361ca6d37c14a93924f5c43ce1bb, type: 3}
 --- !u!1 &1545818431031242
 GameObject:
   m_ObjectHideFlags: 0
@@ -18522,6 +18618,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4643978111916022}
+  - component: {fileID: 2398691577422170823}
   m_Layer: 0
   m_Name: DNA
   m_TagString: Untagged
@@ -18548,6 +18645,29 @@ Transform:
   - {fileID: 4259562498901536}
   m_Father: {fileID: 4504719856129350}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2398691577422170823
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1996212053872640}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a07957c9f93775845a1d82728a668f72, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::OrganelleData
+  organelleName: DNA
+  pages:
+  - (pronounced D-N-A) Just like a massive Lego set comes with a thick instruction manual showing you exactly how to snap the pieces together, a cell needs instructions to build you. That ultimate instruction manual is your DNA!
+  - What Do They Do? DNA holds the secret recipe for all living things. It tells the cell exactly how to grow, what jobs to do, and how to build important materials. It is the reason you might have your mom's eye color or your dad's curly hair!
+  - 'The purpose of its structure: If you look closely at DNA, it looks like a tall ladder that has been twisted up like a spiral staircase (scientists call this a "double helix"). This twisted shape is incredibly important because it allows the cell to fold and pack a massive amount of information into a tiny, microscopic space.'
+  - 'Fun Fact: DNA is packed so tightly that if you took the DNA out of just one single microscopic cell in your body and unraveled it to stretch it in a straight line, it would be over 6 feet tall!'
+  pageAudioClips:
+  - {fileID: 8300000, guid: 0b002418159e13e4ab043e0df6d14619, type: 3}
+  - {fileID: 8300000, guid: 566fef7d5cd654b458c57405ca3d0ff9, type: 3}
+  - {fileID: 8300000, guid: 285791e61a848d742bcedc723f148775, type: 3}
+  - {fileID: 8300000, guid: 48d606573506bc646a792c13dc22afa2, type: 3}
 --- !u!1 &1996923837720402
 GameObject:
   m_ObjectHideFlags: 0

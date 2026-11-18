@@ -2685,6 +2685,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4544195324776818}
+  - component: {fileID: 2921986078774653739}
   m_Layer: 0
   m_Name: Leukoplast
   m_TagString: Untagged
@@ -2720,6 +2721,29 @@ Transform:
   - {fileID: 4486865853896830}
   m_Father: {fileID: 4384093477673366}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2921986078774653739
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1089779044004452}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a07957c9f93775845a1d82728a668f72, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::OrganelleData
+  organelleName: Leukoplast
+  pages:
+  - (pronounced LOO-koh-plast) Just like a squirrel buries nuts to save them for winter, a plant needs a safe place to hide away its extra food for later. That storage job belongs to the leukoplast!
+  - What Do They Do? When the plant makes extra sweet sugars that it doesn't need to eat right away, the leukoplasts step in. They take that extra food, pack it down into thick starch or oil, and lock it away. When the plant gets hungry on a cloudy day or during the winter, it can unpack these stored snacks to survive!
+  - 'The purpose of its structure: Unlike chloroplasts which are bright green, leukoplasts are completely clear or white (the word "leuko" actually means white!). Because they are usually found hiding underground in the plant''s roots where it is completely dark, they don''t need any green solar panels to catch sunlight. They are built like simple, stretchy storage bags to hold as much packed food as possible.'
+  - 'Fun Fact: If you have ever eaten a french fry, a potato chip, or mashed potatoes, you have eaten millions of leukoplasts! Potatoes are really just swollen underground plant stems packed completely full of starch-filled leukoplasts.'
+  pageAudioClips:
+  - {fileID: 8300000, guid: 629f4041341f682419d271f13fc3280f, type: 3}
+  - {fileID: 8300000, guid: eaa5f2ddf2a5a1244a8ab8e0737aa517, type: 3}
+  - {fileID: 8300000, guid: 760b7f80d4b4cdb4da137455f726d805, type: 3}
+  - {fileID: 8300000, guid: a454a7cb98093504e934c44696606912, type: 3}
 --- !u!1 &1090870813924134
 GameObject:
   m_ObjectHideFlags: 0
@@ -9163,6 +9187,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4068203950540148}
+  - component: {fileID: 319006551571407977}
   m_Layer: 0
   m_Name: BubbleGolgi
   m_TagString: Untagged
@@ -9189,6 +9214,29 @@ Transform:
   - {fileID: 4481370109788500}
   m_Father: {fileID: 4384093477673366}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &319006551571407977
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1379179026946618}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a07957c9f93775845a1d82728a668f72, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::OrganelleData
+  organelleName: Golgi Apparatus and Golgi Vesicles
+  pages:
+  - (pronounced GOHL-jee ap-uh-RAT-us) Just like a city needs a post office to sort, package, and mail out items, a cell needs a way to ship important materials. That job belongs to the Golgi apparatus and its tiny delivery trucks, the Golgi vesicles!
+  - What Do They Do? When the cell's factory (the ER) finishes building proteins and fats, it sends them over to the Golgi. The Golgi inspects these materials, makes a few final changes, and packs them into tiny protective bubbles called vesicles (the "bubble Golgi"). These bubbles then zip away like delivery trucks, safely carrying the packages to other parts of the cell or even right out the front door!
+  - 'The purpose of its structure: The main Golgi apparatus looks like a stack of squished pancakes or folded ribbons. This stacked shape is important because it acts like an assembly line, passing materials through different layers to prepare them step-by-step. The "bubble Golgi" (vesicles) are the little round spheres you see floating nearby, pinching right off the edges of the pancakes to carry the finished packages away.'
+  - 'Fun Fact: The Golgi apparatus is the only organelle in the entire cell that is named after a real person! It was discovered by an Italian scientist named Camillo Golgi way back in 1898.'
+  pageAudioClips:
+  - {fileID: 8300000, guid: 8e73589aaa6b4bd46a62237b5c5ce1ec, type: 3}
+  - {fileID: 8300000, guid: 3e0f1dfbd98b6df428f5500ad6cd5b50, type: 3}
+  - {fileID: 8300000, guid: 93c103979b6be3f43b65453eb9e2bcec, type: 3}
+  - {fileID: 8300000, guid: d835bd5e8fdbbe94c9ad197c9d6777fc, type: 3}
 --- !u!1 &1382072011125338
 GameObject:
   m_ObjectHideFlags: 0
@@ -13494,6 +13542,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4800304110502812}
+  - component: {fileID: 573741148141615580}
   m_Layer: 0
   m_Name: Mitochondrion
   m_TagString: Untagged
@@ -13525,6 +13574,29 @@ Transform:
   - {fileID: 4633618118309666}
   m_Father: {fileID: 4384093477673366}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &573741148141615580
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1561997641369996}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a07957c9f93775845a1d82728a668f72, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::OrganelleData
+  organelleName: Mitochondrion
+  pages:
+  - (pronounced my-toe-KON-dree-uhn) Just like a phone needs a battery to run, an animal cell needs power to survive. That power comes from a tiny organelle called the mitochondria. Because of this, scientists often call it the "powerhouse" of the cell!
+  - What Do They Do? When you eat a meal, your stomach breaks the food down into tiny pieces. However, your body's cells can't use those pieces for energy right away. That is where the mitochondria step in. They take those tiny pieces of food, mix them with the oxygen you breathe in, and turn them into a special type of "cell energy", without this energy, your cells wouldn't be able to do their jobs.
+  - 'The purpose of its structure: The mitochondrion looks like a bean with a zig-zag maze inside. That inner folded membrane zig-zags back and forth for a very important reason: it creates a lot more surface area (or working room) inside a tiny space. It is like folding a giant piece of paper to fit it into a small envelope, giving the mitochondria the maximum amount of space to build and pack in energy.'
+  - 'Fun Fact: The harder a cell has to work, the more mitochondria it needs. A skin cell doesn''t move much, so it only has a few. But your heart and muscle cells are constantly working and moving, so a single muscle cell can have thousands of mitochondria inside it!'
+  pageAudioClips:
+  - {fileID: 8300000, guid: 3643bb4616cfe464b9f13e9e9d034b23, type: 3}
+  - {fileID: 8300000, guid: 3b242f0ce38770b49bd258501ce5fc82, type: 3}
+  - {fileID: 8300000, guid: d35520e4639ea244ca562bfe50c14da3, type: 3}
+  - {fileID: 8300000, guid: 57d46f6e3ca3faa478efbceeac7bd36c, type: 3}
 --- !u!1 &1563304223960320
 GameObject:
   m_ObjectHideFlags: 0
@@ -15277,6 +15349,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4875227288426790}
+  - component: {fileID: 6682468454823779441}
   m_Layer: 0
   m_Name: Chloroplast
   m_TagString: Untagged
@@ -15304,6 +15377,29 @@ Transform:
   - {fileID: 4511964673428768}
   m_Father: {fileID: 4384093477673366}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &6682468454823779441
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1639840055805254}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a07957c9f93775845a1d82728a668f72, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::OrganelleData
+  organelleName: Chloroplast
+  pages:
+  - (pronounced KLOR-uh-plast) Just like a house can use solar panels on the roof to turn sunlight into electricity, a plant cell has a special organelle that turns sunlight into food. That amazing solar-powered machine is called the chloroplast!
+  - What Do They Do? Because plants cannot walk over to a fridge to grab a snack, they have to make their own food. The chloroplast takes in sunlight, water, and air, and magically mixes them together to bake sweet sugars for the plant to eat. This process is called photosynthesis!
+  - 'The purpose of its structure: The chloroplast looks like a green jelly bean filled with tiny stacks of green coins. Those little coin stacks are extremely important because they act like hundreds of tiny solar panels. By stacking them up, the chloroplast can catch the absolute maximum amount of sunlight possible in a small space.'
+  - 'Fun Fact: Chloroplasts are filled with a special green juice called chlorophyll. This is the exact reason why plant leaves and stems look green to our eyes!'
+  pageAudioClips:
+  - {fileID: 8300000, guid: d62cf3c1944574a448dcdc0bce0a9871, type: 3}
+  - {fileID: 8300000, guid: 9f85afb80d51d404d90563fc3b5633f5, type: 3}
+  - {fileID: 8300000, guid: c47ba65e6d99b064183b3ec51551a06c, type: 3}
+  - {fileID: 8300000, guid: b731571b745f6634890375eec7deb897, type: 3}
 --- !u!1 &1641936563985050
 GameObject:
   m_ObjectHideFlags: 0
@@ -16999,6 +17095,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4950717186815508}
+  - component: {fileID: 106887243629815176}
   m_Layer: 0
   m_Name: IncorporationOf
   m_TagString: Untagged
@@ -17031,6 +17128,29 @@ Transform:
   - {fileID: 4175633745341868}
   m_Father: {fileID: 4384093477673366}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &106887243629815176
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1740491140413322}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a07957c9f93775845a1d82728a668f72, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::OrganelleData
+  organelleName: Cell Inclusions
+  pages:
+  - (pronounced in-KLOO-zhuns) Just like a house needs a pantry or a closet to store extra food and supplies for later, a cell needs a place to stash its leftovers. Those tiny storage spots are called cell inclusions!
+  - What Do They Do? Inclusions are simply clumps of stored materials waiting to be used. Sometimes they hold extra fat or sugar for the cell to use as a quick snack when it needs energy. Other times, they hold special chemicals, like the pigments that give your hair and eyes their color.
+  - 'The purpose of its structure: These inclusions look like simple, little floating blobs, drops, or grains scattered around the empty space of the cell. Because their only job is to hold stuff, they don''t need a complicated maze or a thick vault like other organelles. They are just tightly packed drops of material, which is the perfect shape for taking up as little room as possible while they wait to be used.'
+  - ' Fun Fact: If you eat more sugar than your body needs right away, your liver and muscle cells will pack that extra sugar tightly together into special inclusions called "glycogen." This acts like a secret backup battery, giving you a sudden burst of energy for your next gym class or recess!'
+  pageAudioClips:
+  - {fileID: 8300000, guid: bb38e0eaa6af98f468a0bbb8e11e7f01, type: 3}
+  - {fileID: 8300000, guid: 0ba4ae13fd709054fac836310184cb50, type: 3}
+  - {fileID: 8300000, guid: 8c8e8ec3672227848b972fcf7520a7ae, type: 3}
+  - {fileID: 8300000, guid: b3e2ef70f62d6104eb358332a38a6532, type: 3}
 --- !u!1 &1743926948946992
 GameObject:
   m_ObjectHideFlags: 0
@@ -18657,7 +18777,8 @@ Transform:
   m_LocalPosition: {x: 0.0000000023841857, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 6971230759009188218}
   m_Father: {fileID: 4384093477673366}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &33397866679031464
@@ -19178,6 +19299,7 @@ GameObject:
   - component: {fileID: 4555753603633130}
   - component: {fileID: 33410228824020460}
   - component: {fileID: 23135612356051540}
+  - component: {fileID: 2622168648543552587}
   m_Layer: 0
   m_Name: CentralVacuole_type00
   m_TagString: Untagged
@@ -19257,6 +19379,29 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &2622168648543552587
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1816817228023924}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a07957c9f93775845a1d82728a668f72, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::OrganelleData
+  organelleName: Central Vacuole
+  pages:
+  - (pronounced SEN-trul VAK-yoo-ohl) Just like a town has a giant water tower to make sure everyone has enough to drink, a plant cell needs a massive storage tank. That job belongs to the central vacuole.
+  - What Do They Do? The central vacuole is basically a giant indoor swimming pool for the plant cell. It stores massive amounts of water, along with some extra nutrients and waste. By staying completely full of water, it pushes hard against the inside of the cell, helping the plant stay pumped up and standing tall.
+  - 'The purpose of its structure: The central vacuole is impossible to miss, it looks like a giant, clear water balloon that takes up almost the entire inside of the cell! It is built as one massive, stretchy bubble so it can expand and hold as much water as possible, pushing all the other organelles safely out to the edges.'
+  - 'Fun Fact: Have you ever forgotten to water a houseplant and noticed it gets droopy and wilted? That happens because the cell''s central vacuoles are empty and deflated! As soon as you water the plant, the vacuoles fill back up and the plant stands tall again.'
+  pageAudioClips:
+  - {fileID: 8300000, guid: 183d75701f82ef84493d0fb97d73f18d, type: 3}
+  - {fileID: 8300000, guid: 893713bfc384d754ca12bbc2f1d066c3, type: 3}
+  - {fileID: 8300000, guid: b0d767dcc440fd840a4440992ecd921f, type: 3}
+  - {fileID: 8300000, guid: c1fd425c74c6e714fb49286106746758, type: 3}
 --- !u!1 &1817768700245228
 GameObject:
   m_ObjectHideFlags: 0
@@ -19446,6 +19591,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4837021738835296}
+  - component: {fileID: 5693338980176465726}
   m_Layer: 0
   m_Name: Reticulum
   m_TagString: Untagged
@@ -19472,6 +19618,29 @@ Transform:
   - {fileID: 4830990043139698}
   m_Father: {fileID: 4384093477673366}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &5693338980176465726
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1822930893826122}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a07957c9f93775845a1d82728a668f72, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::OrganelleData
+  organelleName: 'Endoplasmic Reticulum '
+  pages:
+  - (pronounced en-doh-PLAZ-mik rih-TIK-yuh-lum) Because that is a mouthful, scientists usually just call it the "ER" for short! Just like a busy city has a giant factory to manufacture goods and a highway system to deliver them, a cell needs a way to build and transport important materials. That huge job belongs to the endoplasmic reticulum.
+  - 'What Do They Do? The ER is divided into two different workspaces: Rough and Smooth. The Rough ER acts like a protein factory, building the main materials the body needs to grow and heal. The Smooth ER has a different job, it builds lipids (fats) and acts like a cleaning crew to break down harmful toxins. Once these materials are built, the ER works like a twisting highway to ship them where they need to go.'
+  - 'The purpose of its structure: The ER looks like a giant, folded maze of flat tunnels and twisting tubes wrapped right around the center of the cell. If you look closely, one section is covered in tiny dots (the Rough ER), while the rest is completely smooth (the Smooth ER). Those dots are tiny workers called "ribosomes." The ER is folded up so tightly to create a massive amount of "factory floor" space for those workers, letting the cell build tons of materials without taking up too much room!'
+  - 'Fun Fact: Your liver is the organ in charge of cleaning bad chemicals and toxins out of your blood. Because the Smooth ER is the cell''s main chemical cleanup crew, a single liver cell is packed with huge amounts of Smooth ER to help keep you healthy!'
+  pageAudioClips:
+  - {fileID: 8300000, guid: b0f378746a7bbf648b597f57483a38d2, type: 3}
+  - {fileID: 8300000, guid: 36575c4c801d034408dc6242d61cdcd6, type: 3}
+  - {fileID: 8300000, guid: a803145dab1e5a24a8592898abaa6700, type: 3}
+  - {fileID: 8300000, guid: dab166232ddbf76479e90dc7efd1ec91, type: 3}
 --- !u!1 &1823182115687306
 GameObject:
   m_ObjectHideFlags: 0
@@ -20741,6 +20910,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4615383639609334}
+  - component: {fileID: 7579627365269025185}
   m_Layer: 0
   m_Name: Nucleus
   m_TagString: Untagged
@@ -20769,6 +20939,29 @@ Transform:
   - {fileID: 4981058247675168}
   m_Father: {fileID: 4384093477673366}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &7579627365269025185
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1867803295324008}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a07957c9f93775845a1d82728a668f72, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::OrganelleData
+  organelleName: 'Nucleus '
+  pages:
+  - (pronounced NOO-klee-us) Just like a city has a city hall or a school has a principal's office, a cell needs a control center to make big decisions. That important job belongs to the nucleus! It acts as the brain or the "boss" of the entire cell.
+  - 'What Do They Do? The nucleus holds the cell''s most valuable treasure: your DNA! DNA is the ultimate instruction manual that tells the cell how to grow, what to build, and how to survive. The nucleus protects this manual and sends out tiny message copies (like blueprints) to the rest of the cell so the other organelles know exactly what to do'
+  - 'The purpose of its structure: The nucleus is usually the biggest, roundest shape right in the middle. It has a tough outer shell called the nuclear envelope, which acts like a thick bank vault to keep the DNA safe. This vault is covered in tiny holes called pores, which act like guarded doors letting only specific messages in and out. Right in the very center, you will see a smaller, solid ball called the nucleolus, this is a special mini-factory whose only job is to build the cell''s ribosomes!'
+  - 'Fun Fact: Almost every cell in your body has a nucleus, but there is one major exception: your red blood cells! When red blood cells grow up, they actually spit out their nucleus entirely so they have more empty room inside to carry oxygen around your body.'
+  pageAudioClips:
+  - {fileID: 8300000, guid: c4b3789175ee6854893cd8c8a7134d23, type: 3}
+  - {fileID: 8300000, guid: 794ef345e01c28f419b4f25860ab866a, type: 3}
+  - {fileID: 8300000, guid: 84e47e59f7118ee4889fa7e274096b52, type: 3}
+  - {fileID: 8300000, guid: 2573d79f88def614eaff54c16fa445a6, type: 3}
 --- !u!1 &1869135175363940
 GameObject:
   m_ObjectHideFlags: 0
@@ -20901,6 +21094,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4725888327898774}
+  - component: {fileID: 4866732135341378019}
   m_Layer: 0
   m_Name: Ribosome
   m_TagString: Untagged
@@ -21084,6 +21278,29 @@ Transform:
   - {fileID: 4514561862478404}
   m_Father: {fileID: 4384093477673366}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &4866732135341378019
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1874057150916488}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a07957c9f93775845a1d82728a668f72, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::OrganelleData
+  organelleName: Ribosome
+  pages:
+  - (pronounced RYE-buh-sohm) Just like a construction site needs workers to read the blueprints and build a house, your body needs tiny workers to read instructions and build you! Those tiny, hard-working builders are called ribosomes.
+  - What Do They Do? Ribosomes are the protein builders of the cell. The nucleus sends out a copy of your DNA instructions, and the ribosome reads it like a recipe card. By reading this recipe, it knows exactly how to snap smaller pieces together to build a protein. These proteins are then used to build your hair, skin, muscles, and help your body heal!
+  - 'The purpose of its structure: Ribosomes just look like tiny little dots or seeds. They are the smallest organelles in the whole cell! Even though they look like simple dots, they are actually made of two separate puzzle pieces (a top piece and a bottom piece) that clamp together perfectly around the recipe card to read it. Because they are so small, a single cell can easily fit millions of them inside to get lots of building done at once.'
+  - '- Fun Fact: Ribosomes are incredibly important for survival. In fact, they are one of the only organelles that you can find in absolutely every living thing on planet Earth! Whether it is a plant, an animal, a fungus, or a microscopic bacteria, they all rely on ribosomes to stay alive.'
+  pageAudioClips:
+  - {fileID: 8300000, guid: c94e0daaccafef4498cd2d6154dafb51, type: 3}
+  - {fileID: 8300000, guid: ab8dacdb24306ac48afdc91bdd6d0419, type: 3}
+  - {fileID: 8300000, guid: fb90148da373312409642c334ed9548c, type: 3}
+  - {fileID: 8300000, guid: ff59e30906c023e49b4f4de5968e3986, type: 3}
 --- !u!1 &1877562356917442
 GameObject:
   m_ObjectHideFlags: 0
@@ -21813,6 +22030,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4720561449397308}
+  - component: {fileID: 4669717170498824259}
   m_Layer: 0
   m_Name: Lysosome
   m_TagString: Untagged
@@ -21839,6 +22057,29 @@ Transform:
   - {fileID: 4076879858920074}
   m_Father: {fileID: 4384093477673366}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &4669717170498824259
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1896462416119502}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a07957c9f93775845a1d82728a668f72, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::OrganelleData
+  organelleName: Lysosome
+  pages:
+  - ' (pronounced LYE-suh-sohm) Just like a busy city needs a recycling center and garbage trucks, a cell needs a way to clean up its trash. That important cleanup job belongs to a tiny organelle called the lysosome!'
+  - What Do They Do? When the cell has waste, worn-out parts, or even invading germs, the lysosome steps in to help. It acts like a tiny stomach, swallowing up the trash and using special chemicals to break it down. It even recycles the good materials so the cell can use them to build new things.
+  - 'The purpose of its structure: The lysosome looks like a simple, round bubble or sac. This strong outer bubble is extremely important because it acts like a safety wall. It locks away the powerful "digestive juices" inside so they don''t leak out and accidentally damage the rest of the healthy cell.'
+  - 'Fun Fact: Lysosomes are the secret behind how a tadpole turns into a frog! When a tadpole is ready to grow up, the cells in its tail use their lysosomes to safely digest themselves. The frog''s body then recycles that energy to grow its new legs!'
+  pageAudioClips:
+  - {fileID: 8300000, guid: 810bf810b65b858499311ec99e494808, type: 3}
+  - {fileID: 8300000, guid: d0b4dd95ea68c754fbbe2c62dcdf5833, type: 3}
+  - {fileID: 8300000, guid: bab7c45b045880a42b8c44ddfe4259bc, type: 3}
+  - {fileID: 8300000, guid: 2d85ab0151e93f24d8bc028d39385d50, type: 3}
 --- !u!1 &1900393537375042
 GameObject:
   m_ObjectHideFlags: 0
@@ -23672,3 +23913,34 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!1 &4310066962983638734
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6971230759009188218}
+  m_Layer: 0
+  m_Name: GameObject
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6971230759009188218
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4310066962983638734}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 4450978021428850}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
