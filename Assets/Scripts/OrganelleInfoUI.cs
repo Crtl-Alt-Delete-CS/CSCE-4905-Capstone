@@ -1,9 +1,17 @@
+using System;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class OrganelleInfoUI : MonoBehaviour
 {
+    [Serializable]
+    public class OrganelleAudio
+    {
+        public string organelleName;
+        public AudioClip[] pageAudioClips;
+    }
+
     [Header("Panel Root")]
     public GameObject panelRoot;
 
@@ -21,8 +29,22 @@ public class OrganelleInfoUI : MonoBehaviour
     private Texture2D roundedTexture;
     private ScrollRect descriptionScroll;
 
+    [Header("Audio")]
+    public AudioSource audioSource;
+    public OrganelleAudio[] audioLibrary;
+
+    private string[] currentPages;
+    private AudioClip[] currentAudioClips;
+    private int currentPageIndex;
+
     private void Awake()
     {
+        if (nextButton != null)
+            nextButton.onClick.AddListener(OnNextClicked);
+
+        if (soundButton != null)
+            soundButton.onClick.AddListener(OnSoundClicked);
+
         if (panelRoot == null)
             return;
 
@@ -34,6 +56,7 @@ public class OrganelleInfoUI : MonoBehaviour
         ConfigurePanel();
         ConfigureDescription();
         ConfigureCloseButton();
+        ConfigureAddedControls();
         HideAddedControls();
         panelRoot.SetActive(false);
     }
@@ -211,10 +234,74 @@ public class OrganelleInfoUI : MonoBehaviour
         closeButton.gameObject.SetActive(true);
     }
 
+    private void ConfigureAddedControls()
+    {
+        ConfigureAddedButton(nextButton, "NEXT", new Vector2(0.53f, 0.02f), new Vector2(0.74f, 0.10f));
+        ConfigureAddedButton(soundButton, "SOUND", new Vector2(0.76f, 0.02f), new Vector2(0.97f, 0.10f));
+    }
+
+    private void ConfigureAddedButton(Button button, string label, Vector2 anchorMin, Vector2 anchorMax)
+    {
+        if (button == null)
+            return;
+
+        RectTransform buttonRect = button.GetComponent<RectTransform>();
+        SetAnchors(buttonRect, anchorMin, anchorMax);
+        button.transition = Selectable.Transition.None;
+
+        Image buttonImage = button.GetComponent<Image>();
+        if (buttonImage != null)
+        {
+            buttonImage.sprite = roundedSprite;
+            buttonImage.type = Image.Type.Sliced;
+            buttonImage.color = theme.SecondarySurface;
+        }
+
+        TMP_Text buttonText = button.GetComponentInChildren<TMP_Text>(true);
+        if (buttonText != null)
+        {
+            buttonText.text = label;
+            buttonText.fontSize = 20f;
+            buttonText.fontStyle = FontStyles.Bold;
+            buttonText.color = theme.MainText;
+            buttonText.alignment = TextAlignmentOptions.Center;
+            buttonText.raycastTarget = false;
+            Stretch(buttonText.rectTransform);
+        }
+    }
+
     private void ShowInfo(OrganelleTarget organelle)
     {
         if (organelle == null)
             return;
+
+        DisplayOrganelle(organelle.OrganelleName, organelle.Pages);
+    }
+
+    public void DisplayOrganelle(string organelleName, string[] pages)
+    {
+        DisplayOrganelle(organelleName, pages, FindAudioClips(organelleName));
+    }
+
+    public void DisplayOrganelle(OrganelleData data)
+    {
+        if (data == null)
+            return;
+
+        string displayName = string.IsNullOrEmpty(data.organelleName)
+            ? data.gameObject.name
+            : data.organelleName;
+        AudioClip[] pageClips = data.pageAudioClips;
+        if (pageClips == null || pageClips.Length == 0)
+            pageClips = FindAudioClips(displayName);
+
+        DisplayOrganelle(displayName, data.pages, pageClips);
+    }
+
+    private void DisplayOrganelle(string organelleName, string[] pages, AudioClip[] pageClips)
+    {
+        if (audioSource != null && audioSource.isPlaying)
+            audioSource.Stop();
 
         if (panelRoot != null)
         {
@@ -223,23 +310,57 @@ public class OrganelleInfoUI : MonoBehaviour
         }
 
         if (organelleTitle != null)
-            organelleTitle.text = organelle.OrganelleName;
+            organelleTitle.text = organelleName;
 
+        currentPages = pages;
+        currentAudioClips = pageClips;
+        currentPageIndex = 0;
+        UpdatePageDisplay();
+    }
+
+    private AudioClip[] FindAudioClips(string organelleName)
+    {
+        if (audioLibrary == null || string.IsNullOrWhiteSpace(organelleName))
+            return null;
+
+        foreach (OrganelleAudio entry in audioLibrary)
+        {
+            if (entry != null && !string.IsNullOrWhiteSpace(entry.organelleName) &&
+                entry.organelleName.Trim().Equals(organelleName.Trim(), StringComparison.OrdinalIgnoreCase))
+                return entry.pageAudioClips;
+        }
+
+        return null;
+    }
+
+    private void UpdatePageDisplay()
+    {
         if (organelleDescription != null)
-            organelleDescription.text = organelle.description;
+            organelleDescription.text = currentPages != null && currentPages.Length > 0
+                ? currentPages[Mathf.Clamp(currentPageIndex, 0, currentPages.Length - 1)]
+                : "No description available";
 
         if (descriptionScroll != null)
         {
             Canvas.ForceUpdateCanvases();
-            LayoutRebuilder.ForceRebuildLayoutImmediate(organelleDescription.rectTransform);
+            if (organelleDescription != null)
+                LayoutRebuilder.ForceRebuildLayoutImmediate(organelleDescription.rectTransform);
             descriptionScroll.verticalNormalizedPosition = 1f;
         }
+
+        if (nextButton != null)
+            nextButton.gameObject.SetActive(currentPages != null && currentPages.Length > 1);
+
+        if (soundButton != null)
+            soundButton.gameObject.SetActive(audioSource != null &&
+                currentAudioClips != null &&
+                currentPageIndex < currentAudioClips.Length &&
+                currentAudioClips[currentPageIndex] != null);
     }
 
     private void HideInfo()
     {
-        if (panelRoot != null)
-            panelRoot.SetActive(false);
+        HidePanel();
     }
 
     private void ClearSelection()
@@ -254,6 +375,40 @@ public class OrganelleInfoUI : MonoBehaviour
 
         if (soundButton != null)
             soundButton.gameObject.SetActive(false);
+    }
+
+    private void OnNextClicked()
+    {
+        if (currentPages == null || currentPages.Length <= 1)
+            return;
+
+        if (audioSource != null && audioSource.isPlaying)
+            audioSource.Stop();
+
+        currentPageIndex = (currentPageIndex + 1) % currentPages.Length;
+        UpdatePageDisplay();
+    }
+
+    private void OnSoundClicked()
+    {
+        if (audioSource == null || currentAudioClips == null ||
+            currentPageIndex >= currentAudioClips.Length ||
+            currentAudioClips[currentPageIndex] == null)
+            return;
+
+        audioSource.Stop();
+        audioSource.clip = currentAudioClips[currentPageIndex];
+        audioSource.Play();
+    }
+
+    public void HidePanel()
+    {
+        if (audioSource != null && audioSource.isPlaying)
+            audioSource.Stop();
+
+        if (panelRoot != null)
+            panelRoot.SetActive(false);
+        HideAddedControls();
     }
 
     private Sprite CreateRoundedSprite()

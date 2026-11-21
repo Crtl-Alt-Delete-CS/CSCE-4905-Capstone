@@ -14,6 +14,7 @@ public class OrganelleSelectionManager : MonoBehaviour
     [SerializeField] private Camera arCamera;
     [SerializeField] private LayerMask selectableLayers = ~0;
     [SerializeField] private float maxDistance = 100f;
+    [SerializeField] private OrganelleInfoUI infoUI;
 
     private static OrganelleSelectionManager _instance;
     private static readonly RaycastHit[] HitBuffer = new RaycastHit[64];
@@ -44,8 +45,11 @@ public class OrganelleSelectionManager : MonoBehaviour
 
         _instance = this;
 
+        if (infoUI == null)
+            infoUI = FindFirstObjectByType<OrganelleInfoUI>();
+
         // Show the selected organelle's name even if no info panel has been built in the scene.
-        if (FindFirstObjectByType<OrganelleInfoUI>() == null && GetComponent<OrganelleSelectionLabel>() == null)
+        if (infoUI == null && GetComponent<OrganelleSelectionLabel>() == null)
             gameObject.AddComponent<OrganelleSelectionLabel>();
     }
 
@@ -90,6 +94,18 @@ public class OrganelleSelectionManager : MonoBehaviour
         Current = target;
         Current.SetSelected(true);
         OnOrganelleSelected?.Invoke(target);
+
+        if (infoUI == null)
+            infoUI = FindFirstObjectByType<OrganelleInfoUI>();
+
+        if (infoUI != null)
+        {
+            OrganelleData data = target.GetComponentInParent<OrganelleData>();
+            if (data != null)
+                infoUI.DisplayOrganelle(data);
+            else
+                Debug.LogWarning($"OrganelleData script is missing on {target.gameObject.name}");
+        }
     }
 
     public void ClearSelection()
@@ -99,5 +115,8 @@ public class OrganelleSelectionManager : MonoBehaviour
         Current.SetSelected(false);
         Current = null;
         OnSelectionCleared?.Invoke();
+
+        if (infoUI != null)
+            infoUI.HidePanel();
     }
 }

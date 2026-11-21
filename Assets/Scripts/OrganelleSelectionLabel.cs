@@ -36,15 +36,20 @@ public class OrganelleSelectionLabel : MonoBehaviour
         }
 
         // Scale with screen size so it stays readable on phones.
-        float unit = Mathf.Max(Screen.width, Screen.height) / 40f;
+        float unit = Mathf.Min(Screen.width, Screen.height) / 30f;
         _titleStyle.fontSize = Mathf.RoundToInt(unit * 1.2f);
         _bodyStyle.fontSize = Mathf.RoundToInt(unit);
 
         float width = Screen.width * 0.9f;
-        float height = string.IsNullOrEmpty(_selected.description) ? unit * 3f : unit * 6.5f;
+        float height = string.IsNullOrEmpty(_selected.description)
+            ? unit * 3f
+            : unit * 8f;
         var rect = new Rect((Screen.width - width) / 2f, Screen.height - height - unit, width, height);
 
-        GUI.Box(rect, GUIContent.none);
+        Color previousColor = GUI.color;
+        GUI.color = new Color(0.08f, 0.12f, 0.18f, 0.95f);
+        GUI.DrawTexture(rect, Texture2D.whiteTexture);
+        GUI.color = previousColor;
         var inner = new Rect(rect.x + unit * 0.5f, rect.y + unit * 0.3f, rect.width - unit, rect.height - unit * 0.6f);
         GUILayout.BeginArea(inner);
         GUILayout.Label(_selected.OrganelleName + " (selected)", _titleStyle);
