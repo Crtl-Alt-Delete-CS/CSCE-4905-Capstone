@@ -45,8 +45,11 @@ public class OrganelleSelectionManager : MonoBehaviour
 
         _instance = this;
 
+        if (infoUI == null)
+            infoUI = FindFirstObjectByType<OrganelleInfoUI>();
+
         // Show the selected organelle's name even if no info panel has been built in the scene.
-        if (FindFirstObjectByType<OrganelleInfoUI>() == null && GetComponent<OrganelleSelectionLabel>() == null)
+        if (infoUI == null && GetComponent<OrganelleSelectionLabel>() == null)
             gameObject.AddComponent<OrganelleSelectionLabel>();
     }
 
@@ -92,23 +95,17 @@ public class OrganelleSelectionManager : MonoBehaviour
         Current.SetSelected(true);
         OnOrganelleSelected?.Invoke(target);
 
+        if (infoUI == null)
+            infoUI = FindFirstObjectByType<OrganelleInfoUI>();
+
         if (infoUI != null)
         {
-            // READ COMPONENT: get the data directly off the clicked 3D model
             OrganelleData data = target.GetComponentInParent<OrganelleData>();
-
             if (data != null)
-            { 
                 infoUI.DisplayOrganelle(data);
-            }
             else
-            {
                 Debug.LogWarning($"OrganelleData script is missing on {target.gameObject.name}");
-            }
-
         }
-        
-
     }
 
     public void ClearSelection()
@@ -120,8 +117,6 @@ public class OrganelleSelectionManager : MonoBehaviour
         OnSelectionCleared?.Invoke();
 
         if (infoUI != null)
-        {
             infoUI.HidePanel();
-        }
     }
 }

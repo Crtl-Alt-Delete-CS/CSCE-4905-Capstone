@@ -13,7 +13,7 @@ PlayerSettings:
   useOnDemandResources: 0
   accelerometerFrequency: 60
   companyName: DefaultCompany
-  productName: AR-Science
+  productName: BioVisionAR
   defaultCursor: {fileID: 0}
   cursorHotspot: {x: 0, y: 0}
   m_SplashScreenBackgroundColor: {r: 0.13725491, g: 0.12156863, b: 0.1254902, a: 1}
@@ -152,6 +152,10 @@ PlayerSettings:
   bundleVersion: 0.1.0
   preloadedAssets:
   - {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
+  - {fileID: -2335749672829738884, guid: 6fd61533303954c4184eca67c066a71b, type: 2}
+  - {fileID: 4759182818808864692, guid: 02e2da6ca53f5b14987ccfd12cd7069a, type: 2}
+  - {fileID: 4800000, guid: c9f956787b1d945e7b36e0516201fc76, type: 3}
+  - {fileID: 4800000, guid: 0945859e5a1034c2cb6dce53cb4fb899, type: 3}
   metroInputSource: 0
   wsaTransparentSwapchain: 0
   xboxOneDisableKinectGpuReservation: 1
@@ -800,14 +804,14 @@ PlayerSettings:
   editorAssembliesCompatibilityLevel: 1
   m_RenderingPath: 1
   m_MobileRenderingPath: 1
-  metroPackageName: AR-Science
+  metroPackageName: BioVisionAR
   metroPackageVersion: 
   metroCertificatePath: 
   metroCertificatePassword: 
   metroCertificateSubject: 
   metroCertificateIssuer: 
   metroCertificateNotAfter: 0000000000000000
-  metroApplicationDescription: AR-Science
+  metroApplicationDescription: BioVisionAR
   wsaImages: {}
   metroTileShortName: 
   metroTileShowName: 0
@@ -881,7 +885,7 @@ PlayerSettings:
   cloudProjectId: 822c2b94-5a68-4f61-88eb-f06c11e8b8be
   framebufferDepthMemorylessMode: 0
   qualitySettingsNames: []
-  projectName: AR-Science 2026-09-28_16-08-53
+  projectName: BioVisionAR
   organizationId: cpbriones1
   cloudEnabled: 0
   legacyClampBlendShapeWeights: 0
