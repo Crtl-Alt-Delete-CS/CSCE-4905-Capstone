@@ -1,6 +1,6 @@
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "AppUITheme", menuName = "AR Science/UI Theme")]
+[CreateAssetMenu(fileName = "AppUITheme", menuName = "BioVisionAR/UI Theme")]
 public sealed class AppUITheme : ScriptableObject
 {
     [Header("Surfaces")]

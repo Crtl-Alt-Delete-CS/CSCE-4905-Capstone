@@ -65,8 +65,8 @@ public sealed class HomeLoadingUI : MonoBehaviour
     private GameObject homeScreen;
     private GameObject placeholderOverlay;
     private TMP_Text placeholderTitle;
-    private Image progressFill;
-    private TMP_Text loadingStatus;
+    private LoadingBar loadingBar;
+    private float loadingProgress;
     private Action startAR;
     private Rect lastSafeArea;
     private int screenWidth;
@@ -156,51 +156,25 @@ public sealed class HomeLoadingUI : MonoBehaviour
         logoLayout.flexibleHeight = 0f;
         CreateLogoMark(logo.transform);
 
-        TMP_Text title = CreateText("AR Science", stack, 42, FontStyles.Bold, theme.MainText, TextAlignmentOptions.Center);
+        TMP_Text title = CreateText("BioVisionAR", stack, 42, FontStyles.Bold, theme.MainText, TextAlignmentOptions.Center);
         title.gameObject.AddComponent<LayoutElement>().preferredHeight = 54f;
         TMP_Text subtitle = CreateText("Cell Biology Explorer", stack, 18, FontStyles.Normal, theme.MutedText, TextAlignmentOptions.Center);
         subtitle.gameObject.AddComponent<LayoutElement>().preferredHeight = 28f;
 
-        GameObject progressPanel = CreateImage("Loading Progress Card", stack, roundedSprite, theme.Border);
-        LayoutElement progressPanelLayout = progressPanel.AddComponent<LayoutElement>();
-        progressPanelLayout.preferredHeight = 108f;
-        progressPanelLayout.minHeight = 108f;
-        progressPanel.GetComponent<Image>().raycastTarget = false;
+        GameObject loadingBarPrefab = Resources.Load<GameObject>("Prefabs/LoadingBar");
+        if (loadingBarPrefab == null)
+            throw new InvalidOperationException("The LoadingBar prefab is missing from Resources.");
 
-        GameObject progressSurface = CreateImage("Loading Progress Surface", progressPanel.transform, roundedSprite, theme.CardSurface);
-        RectTransform progressSurfaceRect = progressSurface.GetComponent<RectTransform>();
-        Stretch(progressSurfaceRect);
-        progressSurfaceRect.offsetMin = Vector2.one;
-        progressSurfaceRect.offsetMax = Vector2.one * -1f;
-        progressSurface.GetComponent<Image>().raycastTarget = false;
+        GameObject loadingBarObject = Instantiate(loadingBarPrefab, stack, false);
+        loadingBarObject.name = "Loading Bar";
+        LayoutElement prefabLayout = loadingBarObject.GetComponent<LayoutElement>();
+        if (prefabLayout == null)
+            prefabLayout = loadingBarObject.AddComponent<LayoutElement>();
+        prefabLayout.preferredHeight = 108f;
+        loadingBar = loadingBarObject.GetComponent<LoadingBar>();
 
-        VerticalLayoutGroup progressPanelLayoutGroup = progressSurface.AddComponent<VerticalLayoutGroup>();
-        progressPanelLayoutGroup.padding = new RectOffset(18, 18, 14, 14);
-        progressPanelLayoutGroup.spacing = 11f;
-        progressPanelLayoutGroup.childAlignment = TextAnchor.MiddleCenter;
-        progressPanelLayoutGroup.childControlWidth = true;
-        progressPanelLayoutGroup.childControlHeight = false;
-        progressPanelLayoutGroup.childForceExpandWidth = true;
-        progressPanelLayoutGroup.childForceExpandHeight = false;
-
-        TMP_Text progressHeading = CreateText("Loading Heading", progressSurface.transform, 11, FontStyles.Bold, theme.Primary, TextAlignmentOptions.Left);
-        progressHeading.text = "GETTING THINGS READY";
-        progressHeading.characterSpacing = 1.5f;
-        progressHeading.gameObject.AddComponent<LayoutElement>().preferredHeight = 14f;
-
-        GameObject progressTrack = CreateImage("Progress Track", progressSurface.transform, roundedSprite, theme.MutedSurface);
-        LayoutElement trackLayout = progressTrack.AddComponent<LayoutElement>();
-        trackLayout.preferredHeight = 8f;
-        trackLayout.minHeight = 8f;
-        progressFill = CreateImage("Progress Fill", progressTrack.transform, roundedSprite, theme.Primary).GetComponent<Image>();
-        progressFill.type = Image.Type.Filled;
-        progressFill.fillMethod = Image.FillMethod.Horizontal;
-        progressFill.fillOrigin = (int)Image.OriginHorizontal.Left;
-        progressFill.fillAmount = 0f;
-        Stretch(progressFill.rectTransform);
-
-        loadingStatus = CreateText(loadingTasks[0] + "  0%", progressSurface.transform, 13, FontStyles.Normal, theme.MutedText, TextAlignmentOptions.Left);
-        loadingStatus.gameObject.AddComponent<LayoutElement>().preferredHeight = 20f;
+        loadingProgress = 0f;
+        loadingBar.SetProgress(loadingProgress, loadingTasks[0] + "  0%");
 
         Button skipButton = CreateTextButton("Skip", stack, 16, theme.MutedText, () => ShowHome());
         skipButton.gameObject.AddComponent<LayoutElement>().preferredHeight = 44f;
@@ -544,7 +518,7 @@ public sealed class HomeLoadingUI : MonoBehaviour
                 elapsed += Time.unscaledDeltaTime;
                 float taskProgress = Mathf.Clamp01(elapsed / duration);
                 float overallProgress = (i + taskProgress) / loadingTasks.Length;
-                progressFill.fillAmount = overallProgress;
+                loadingProgress = overallProgress;
                 SetLoadingStatus(loadingTasks[i], Mathf.RoundToInt(overallProgress * 100f));
                 yield return null;
             }
@@ -584,7 +558,7 @@ public sealed class HomeLoadingUI : MonoBehaviour
 
     private void SetLoadingStatus(string status, int percentage)
     {
-        loadingStatus.text = "<mspace=0.55em>" + status + "  " + percentage + "%</mspace>";
+        loadingBar.SetProgress(loadingProgress, "<mspace=0.55em>" + status + "  " + percentage + "%</mspace>");
     }
 
     private Button CreateTextButton(string label, Transform parent, float size, Color color, Action onClick)
