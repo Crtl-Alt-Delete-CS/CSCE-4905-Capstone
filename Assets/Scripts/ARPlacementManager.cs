@@ -63,6 +63,9 @@ public class ARPlacementManager : MonoBehaviour
         if (cellInteraction == null)
             cellInteraction = FindFirstObjectByType<ARCellInteraction>();
 
+        if (cellControlsPanel == null)
+            cellControlsPanel = FindObjectByName("ControlsPanel");
+
         mode = startMode;
 
         SetARExperienceActive(false);
@@ -81,6 +84,22 @@ public class ARPlacementManager : MonoBehaviour
             return;
 
         UpdateARStatus();
+    }
+
+    private GameObject FindObjectByName(string objectName)
+    {
+        Transform[] objects = FindObjectsByType<Transform>(
+            FindObjectsInactive.Include,
+            FindObjectsSortMode.None
+        );
+
+        foreach (Transform item in objects)
+        {
+            if (item.name == objectName)
+                return item.gameObject;
+        }
+
+        return null;
     }
 
     // =====================================================
