@@ -1,4 +1,4 @@
-using UnityEngine;
+    using UnityEngine;
 using UnityEngine.XR.ARFoundation;
 using UnityEngine.InputSystem.UI;
 using UnityEngine.EventSystems;
@@ -8,12 +8,12 @@ public class ARPlacementManager : MonoBehaviour
 {
     public enum ARMode
     {
-        ImageTracking,
-        PlanePlacement
+        PlanePlacement,
+        ImageTracking
     }
 
     [Header("Mode")]
-    [SerializeField] private ARMode startMode = ARMode.ImageTracking;
+    [SerializeField] private ARMode startMode = ARMode.PlanePlacement;
 
     [Header("AR References (auto-found if left empty)")]
     [SerializeField] private ARTrackedImageManager imageManager;
