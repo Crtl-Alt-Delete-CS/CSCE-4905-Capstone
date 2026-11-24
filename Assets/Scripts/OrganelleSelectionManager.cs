@@ -18,9 +18,20 @@ public class OrganelleSelectionManager : MonoBehaviour
     [SerializeField] private float maxDistance = 100f;
     [SerializeField] private OrganelleInfoUI infoUI;
 
+    [Header("Single View Sizing")]
+    [SerializeField] private float singleViewCellFraction = 0.7f;
+    [SerializeField] private float minSingleViewScaleMultiplier = 1.5f;
+    [SerializeField] private float maxSingleViewScaleMultiplier = 15f;
+    [SerializeField] private bool centerOrganelleInSingleView = true;
+
     private static OrganelleSelectionManager _instance;
     private static readonly RaycastHit[] HitBuffer = new RaycastHit[64];
     private readonly List<GameObject> hiddenCellParts = new List<GameObject>();
+
+    private Transform scaledTarget;
+    private Vector3 savedLocalPosition;
+    private Vector3 savedLocalScale;
+    private bool hasSavedTransform;
 
     public OrganelleTarget Current { get; private set; }
     public bool IsSingleView { get; private set; }
@@ -88,6 +99,12 @@ public class OrganelleSelectionManager : MonoBehaviour
         return false;
     }
 
+    private void OnDisable()
+    {
+        if (IsSingleView || hasSavedTransform || hiddenCellParts.Count > 0)
+            ExitSingleView();
+    }
+
     public void Select(OrganelleTarget target)
     {
         if (target == null) { ClearSelection(); return; }
@@ -95,7 +112,10 @@ public class OrganelleSelectionManager : MonoBehaviour
 
         bool keepSingleView = IsSingleView;
         if (keepSingleView)
+        {
+            RestoreSingleViewTransform();
             RestoreCellParts();
+        }
 
         if (Current != null) Current.SetSelected(false);
 
@@ -104,7 +124,7 @@ public class OrganelleSelectionManager : MonoBehaviour
         OnOrganelleSelected?.Invoke(target);
 
         if (keepSingleView)
-            HideEverythingExcept(Current);
+            IsolateCurrentOrganelle();
 
         if (infoUI == null)
             infoUI = FindFirstObjectByType<OrganelleInfoUI>();
@@ -135,17 +155,31 @@ public class OrganelleSelectionManager : MonoBehaviour
         if (Current == null || IsSingleView)
             return;
 
+        IsolateCurrentOrganelle();
+        OnSingleViewChanged?.Invoke(true);
+    }
+
+    private void IsolateCurrentOrganelle()
+    {
+        if (Current == null)
+            return;
+
+        Bounds cellBounds = default;
+        CellOrganelleSetup cell = Current.GetComponentInParent<CellOrganelleSetup>();
+        bool hasCellBounds = cell != null && TryGetRendererBounds(cell.transform, out cellBounds);
+
         HideEverythingExcept(Current);
         IsSingleView = true;
         Current.RefreshOutline();
-        OnSingleViewChanged?.Invoke(true);
+        ApplySingleViewTransform(Current, hasCellBounds, cellBounds);
     }
 
     public void ExitSingleView()
     {
-        if (!IsSingleView && hiddenCellParts.Count == 0)
+        if (!IsSingleView && hiddenCellParts.Count == 0 && !hasSavedTransform)
             return;
 
+        RestoreSingleViewTransform();
         RestoreCellParts();
         IsSingleView = false;
         if (Current != null)
@@ -209,5 +243,99 @@ public class OrganelleSelectionManager : MonoBehaviour
         }
 
         hiddenCellParts.Clear();
+    }
+
+    private void ApplySingleViewTransform(OrganelleTarget target, bool hasCellBounds, Bounds cellBounds)
+    {
+        if (target == null)
+            return;
+
+        RestoreSingleViewTransform();
+
+        Transform targetTransform = target.transform;
+        scaledTarget = targetTransform;
+        savedLocalPosition = targetTransform.localPosition;
+        savedLocalScale = targetTransform.localScale;
+        hasSavedTransform = true;
+
+        bool hasOrgBounds = TryGetRendererBounds(targetTransform, out Bounds orgBounds);
+        float multiplier = minSingleViewScaleMultiplier;
+
+        if (hasCellBounds && hasOrgBounds)
+        {
+            float cellExtent = MaxAxis(cellBounds.size);
+            float orgExtent = MaxAxis(orgBounds.size);
+            if (cellExtent > 0.0001f && orgExtent > 0.0001f)
+            {
+                float targetExtent = cellExtent * singleViewCellFraction;
+                multiplier = Mathf.Clamp(
+                    targetExtent / orgExtent,
+                    minSingleViewScaleMultiplier,
+                    maxSingleViewScaleMultiplier);
+            }
+        }
+
+        targetTransform.localScale = savedLocalScale * multiplier;
+
+        if (hasOrgBounds && TryGetRendererBounds(targetTransform, out Bounds scaledBounds))
+        {
+            Vector3 desiredCenter = centerOrganelleInSingleView && hasCellBounds
+                ? cellBounds.center
+                : orgBounds.center;
+            targetTransform.position += desiredCenter - scaledBounds.center;
+        }
+    }
+
+    private void RestoreSingleViewTransform()
+    {
+        if (!hasSavedTransform)
+            return;
+
+        if (scaledTarget != null)
+        {
+            scaledTarget.localPosition = savedLocalPosition;
+            scaledTarget.localScale = savedLocalScale;
+        }
+
+        scaledTarget = null;
+        hasSavedTransform = false;
+    }
+
+    private static bool TryGetRendererBounds(Transform root, out Bounds bounds)
+    {
+        bounds = default;
+        if (root == null)
+            return false;
+
+        Renderer[] renderers = root.GetComponentsInChildren<Renderer>(false);
+        bool hasBounds = false;
+
+        for (int i = 0; i < renderers.Length; i++)
+        {
+            Renderer r = renderers[i];
+            if (r == null || !r.enabled || !r.gameObject.activeInHierarchy)
+                continue;
+
+            string objName = r.gameObject.name;
+            if (objName == "Organelle Outline" || objName.StartsWith("_"))
+                continue;
+
+            if (!hasBounds)
+            {
+                bounds = r.bounds;
+                hasBounds = true;
+            }
+            else
+            {
+                bounds.Encapsulate(r.bounds);
+            }
+        }
+
+        return hasBounds;
+    }
+
+    private static float MaxAxis(Vector3 size)
+    {
+        return Mathf.Max(size.x, Mathf.Max(size.y, size.z));
     }
 }
