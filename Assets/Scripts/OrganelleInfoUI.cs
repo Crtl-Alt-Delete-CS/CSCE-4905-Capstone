@@ -24,6 +24,10 @@ public class OrganelleInfoUI : MonoBehaviour
     public Button soundButton;
     public Button closeButton;
 
+    private Button singleViewButton;
+    private TMP_Text singleViewLabel;
+    private Image singleViewImage;
+
     private AppUITheme theme;
     private Sprite roundedSprite;
     private Texture2D roundedTexture;
@@ -57,6 +61,7 @@ public class OrganelleInfoUI : MonoBehaviour
         ConfigureDescription();
         ConfigureCloseButton();
         ConfigureAddedControls();
+        CreateSingleViewButton();
         HideAddedControls();
         panelRoot.SetActive(false);
     }
@@ -65,12 +70,14 @@ public class OrganelleInfoUI : MonoBehaviour
     {
         OrganelleSelectionManager.OnOrganelleSelected += ShowInfo;
         OrganelleSelectionManager.OnSelectionCleared += HideInfo;
+        OrganelleSelectionManager.OnSingleViewChanged += RefreshSingleViewButton;
     }
 
     private void OnDisable()
     {
         OrganelleSelectionManager.OnOrganelleSelected -= ShowInfo;
         OrganelleSelectionManager.OnSelectionCleared -= HideInfo;
+        OrganelleSelectionManager.OnSingleViewChanged -= RefreshSingleViewButton;
     }
 
     private void OnDestroy()
@@ -240,6 +247,53 @@ public class OrganelleInfoUI : MonoBehaviour
         ConfigureAddedButton(soundButton, "SOUND", new Vector2(0.76f, 0.02f), new Vector2(0.97f, 0.10f));
     }
 
+    private void CreateSingleViewButton()
+    {
+        if (panelRoot == null)
+            return;
+
+        GameObject buttonObject = new GameObject("Single View Button", typeof(RectTransform), typeof(Image), typeof(Button));
+        buttonObject.transform.SetParent(panelRoot.transform, false);
+
+        singleViewButton = buttonObject.GetComponent<Button>();
+        singleViewImage = buttonObject.GetComponent<Image>();
+        singleViewImage.sprite = roundedSprite;
+        singleViewImage.type = Image.Type.Sliced;
+        singleViewImage.color = theme.SecondarySurface;
+
+        SetAnchors(singleViewButton.GetComponent<RectTransform>(), new Vector2(0.055f, 0.02f), new Vector2(0.50f, 0.10f));
+        singleViewButton.transition = Selectable.Transition.None;
+        singleViewButton.targetGraphic = singleViewImage;
+        singleViewButton.onClick.AddListener(OnSingleViewClicked);
+
+        singleViewLabel = CreateText("Label", buttonObject.transform);
+        singleViewLabel.fontSize = 20f;
+        singleViewLabel.fontStyle = FontStyles.Bold;
+        singleViewLabel.color = theme.MainText;
+        singleViewLabel.alignment = TextAlignmentOptions.Center;
+        Stretch(singleViewLabel.rectTransform);
+        RefreshSingleViewButton(false);
+
+        buttonObject.transform.SetAsLastSibling();
+    }
+
+    private void OnSingleViewClicked()
+    {
+        OrganelleSelectionManager.Instance.ToggleSingleView();
+    }
+
+    private void RefreshSingleViewButton(bool isolated)
+    {
+        if (singleViewLabel != null)
+            singleViewLabel.text = isolated ? "FULL CELL" : "SINGLE VIEW";
+
+        if (singleViewLabel != null)
+            singleViewLabel.color = isolated ? theme.AppBackground : theme.MainText;
+
+        if (singleViewImage != null)
+            singleViewImage.color = isolated ? theme.Primary : theme.SecondarySurface;
+    }
+
     private void ConfigureAddedButton(Button button, string label, Vector2 anchorMin, Vector2 anchorMax)
     {
         if (button == null)
@@ -316,6 +370,7 @@ public class OrganelleInfoUI : MonoBehaviour
         currentAudioClips = pageClips;
         currentPageIndex = 0;
         UpdatePageDisplay();
+        RefreshSingleViewButton(OrganelleSelectionManager.Instance.IsSingleView);
     }
 
     private AudioClip[] FindAudioClips(string organelleName)

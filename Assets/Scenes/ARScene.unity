@@ -3432,6 +3432,7 @@ MonoBehaviour:
   soundButton: {fileID: 1485997714}
   closeButton: {fileID: 1256148486}
   audioSource: {fileID: 1676498179}
+  audioLibrary: []
 --- !u!1 &1916847293
 GameObject:
   m_ObjectHideFlags: 0
@@ -3923,7 +3924,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 24
+  m_fontSize: 21.65
   m_fontSizeBase: 24
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -4081,10 +4082,10 @@ MonoBehaviour:
   raycastManager: {fileID: 2100060280}
   planeManager: {fileID: 2100060281}
   arCamera: {fileID: 1240338629}
-  initialScale: 0.3
+  initialScale: 1
   minScale: 0.3
   maxScale: 6
-  verticalOffset: 0.25
+  verticalOffset: 0.35
   animalCellPrefab: {fileID: 1559809634498624, guid: 99e0bb4ccaf7e674492a5a05a402db9d, type: 3}
   plantCellPrefab: {fileID: 1205969349561346, guid: fb59502e77ab27b46a6b6572969726fd, type: 3}
   bacterialCellPrefab: {fileID: 1911774418819468, guid: bd632f6310a4e5442bc4918cbeee995b, type: 3}

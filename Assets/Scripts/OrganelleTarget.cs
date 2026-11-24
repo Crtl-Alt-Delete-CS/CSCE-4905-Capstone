@@ -1,27 +1,31 @@
+using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Rendering;
 
 /// <summary>
 /// Marks a GameObject (and everything under it) as one selectable organelle.
-/// Handles the visual highlight; selection logic lives in OrganelleSelectionManager.
+/// Draws a screen-space outline while selected, except during single-organelle view.
 /// </summary>
 public class OrganelleTarget : MonoBehaviour
 {
     [SerializeField] private string organelleName = "Organelle";
 
-    [Header("Highlight")]
-    [SerializeField] private Color highlightColor = new Color(1f, 0.85f, 0.1f);
-    [SerializeField, Range(0f, 5f)] private float emissionIntensity = 1.5f;
+    [Header("Outline")]
+    [SerializeField] private Color outlineColor = new Color(1f, 0.85f, 0.1f, 1f);
+    [SerializeField] private float outlinePixels = 3f;
 
     public string OrganelleName => organelleName;
     public bool IsSelected { get; private set; }
     public string[] Pages { get; private set; }
     public string description => (Pages != null && Pages.Length > 0) ? Pages[0] : string.Empty;
 
-    private static readonly int EmissionColorId = Shader.PropertyToID("_EmissionColor");
+    private static readonly int OutlineColorId = Shader.PropertyToID("_OutlineColor");
+    private static readonly int OutlinePixelsId = Shader.PropertyToID("_OutlinePixels");
+    private static Shader outlineShader;
 
-    private Renderer[] _renderers;
-    private Material[][] _originalMaterials;
-    private Material[][] _highlightMaterials;
+    private readonly List<GameObject> outlineObjects = new List<GameObject>();
+    private Material outlineMaterial;
+    private bool outlineApplied;
 
     public void Initialize(string displayName, string[] pages)
     {
@@ -31,63 +35,109 @@ public class OrganelleTarget : MonoBehaviour
 
     public void SetSelected(bool selected)
     {
-        if (selected == IsSelected) return;
-
-        if (selected) ApplyHighlight();
-        else RemoveHighlight();
-
         IsSelected = selected;
+        RefreshOutline();
     }
 
-    private void ApplyHighlight()
+    /// <summary>Shows or hides the outline based on selection and single-organelle view.</summary>
+    public void RefreshOutline()
     {
-        // Search lazily: the highlighted organelle may be a group (e.g. a mitochondrion with two membranes).
-        _renderers = GetComponentsInChildren<Renderer>(true);
-        _originalMaterials = new Material[_renderers.Length][];
-        _highlightMaterials = new Material[_renderers.Length][];
-
-        for (int i = 0; i < _renderers.Length; i++)
-        {
-            Material[] shared = _renderers[i].sharedMaterials;
-            var copies = new Material[shared.Length];
-
-            for (int j = 0; j < shared.Length; j++)
-            {
-                if (shared[j] == null) continue;
-
-                // Instance copies so the shared cell materials (used by every other organelle) stay untouched.
-                var copy = new Material(shared[j]);
-                copy.EnableKeyword("_EMISSION");
-                copy.SetColor(EmissionColorId, highlightColor * emissionIntensity);
-                copies[j] = copy;
-            }
-
-            _originalMaterials[i] = shared;
-            _highlightMaterials[i] = copies;
-            _renderers[i].sharedMaterials = copies;
-        }
+        bool show = IsSelected && !OrganelleSelectionManager.Instance.IsSingleView;
+        if (show)
+            ApplyOutline();
+        else
+            RemoveOutline();
     }
 
-    private void RemoveHighlight()
+    private void ApplyOutline()
     {
-        if (_renderers == null) return;
+        if (outlineApplied)
+            return;
 
-        for (int i = 0; i < _renderers.Length; i++)
+        Shader shader = GetOutlineShader();
+        if (shader == null)
+            return;
+
+        outlineMaterial = new Material(shader);
+        outlineMaterial.name = "Organelle Outline";
+        outlineMaterial.SetColor(OutlineColorId, outlineColor);
+        outlineMaterial.SetFloat(OutlinePixelsId, outlinePixels);
+
+        Renderer[] renderers = GetComponentsInChildren<Renderer>(true);
+        for (int i = 0; i < renderers.Length; i++)
         {
-            if (_renderers[i] != null)
-                _renderers[i].sharedMaterials = _originalMaterials[i];
+            MeshRenderer meshRenderer = renderers[i] as MeshRenderer;
+            if (meshRenderer == null)
+                continue;
 
-            foreach (Material m in _highlightMaterials[i])
-                if (m != null) Destroy(m);
+            MeshFilter filter = meshRenderer.GetComponent<MeshFilter>();
+            if (filter == null || filter.sharedMesh == null)
+                continue;
+
+            CreateOutlineShell(meshRenderer.transform, filter.sharedMesh);
         }
 
-        _renderers = null;
-        _originalMaterials = null;
-        _highlightMaterials = null;
+        outlineApplied = true;
+    }
+
+    private void CreateOutlineShell(Transform source, Mesh mesh)
+    {
+        GameObject shell = new GameObject("Organelle Outline");
+        shell.transform.SetParent(source, false);
+        shell.transform.localPosition = Vector3.zero;
+        shell.transform.localRotation = Quaternion.identity;
+        shell.transform.localScale = Vector3.one;
+
+        MeshFilter shellFilter = shell.AddComponent<MeshFilter>();
+        shellFilter.sharedMesh = mesh;
+
+        MeshRenderer shellRenderer = shell.AddComponent<MeshRenderer>();
+        Material[] materials = new Material[mesh.subMeshCount];
+        for (int i = 0; i < materials.Length; i++)
+            materials[i] = outlineMaterial;
+
+        shellRenderer.sharedMaterials = materials;
+        shellRenderer.shadowCastingMode = ShadowCastingMode.Off;
+        shellRenderer.receiveShadows = false;
+        shellRenderer.lightProbeUsage = LightProbeUsage.Off;
+        shellRenderer.reflectionProbeUsage = ReflectionProbeUsage.Off;
+        shellRenderer.allowOcclusionWhenDynamic = false;
+
+        outlineObjects.Add(shell);
+    }
+
+    private void RemoveOutline()
+    {
+        for (int i = 0; i < outlineObjects.Count; i++)
+        {
+            if (outlineObjects[i] != null)
+                Destroy(outlineObjects[i]);
+        }
+
+        outlineObjects.Clear();
+
+        if (outlineMaterial != null)
+        {
+            Destroy(outlineMaterial);
+            outlineMaterial = null;
+        }
+
+        outlineApplied = false;
+    }
+
+    private static Shader GetOutlineShader()
+    {
+        if (outlineShader == null)
+            outlineShader = Resources.Load<Shader>("Shaders/OrganelleOutline");
+
+        if (outlineShader == null)
+            Debug.LogWarning("Organelle outline shader is missing from Resources/Shaders.");
+
+        return outlineShader;
     }
 
     private void OnDestroy()
     {
-        if (IsSelected) RemoveHighlight();
+        RemoveOutline();
     }
 }

@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
@@ -10,6 +11,7 @@ public class OrganelleSelectionManager : MonoBehaviour
 {
     public static event Action<OrganelleTarget> OnOrganelleSelected;
     public static event Action OnSelectionCleared;
+    public static event Action<bool> OnSingleViewChanged;
 
     [SerializeField] private Camera arCamera;
     [SerializeField] private LayerMask selectableLayers = ~0;
@@ -18,8 +20,10 @@ public class OrganelleSelectionManager : MonoBehaviour
 
     private static OrganelleSelectionManager _instance;
     private static readonly RaycastHit[] HitBuffer = new RaycastHit[64];
+    private readonly List<GameObject> hiddenCellParts = new List<GameObject>();
 
     public OrganelleTarget Current { get; private set; }
+    public bool IsSingleView { get; private set; }
 
     public static OrganelleSelectionManager Instance
     {
@@ -89,11 +93,18 @@ public class OrganelleSelectionManager : MonoBehaviour
         if (target == null) { ClearSelection(); return; }
         if (target == Current) return;
 
+        bool keepSingleView = IsSingleView;
+        if (keepSingleView)
+            RestoreCellParts();
+
         if (Current != null) Current.SetSelected(false);
 
         Current = target;
         Current.SetSelected(true);
         OnOrganelleSelected?.Invoke(target);
+
+        if (keepSingleView)
+            HideEverythingExcept(Current);
 
         if (infoUI == null)
             infoUI = FindFirstObjectByType<OrganelleInfoUI>();
@@ -108,8 +119,45 @@ public class OrganelleSelectionManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Hides every other part of the current cell so only the selected organelle is visible.
+    /// </summary>
+    public void ToggleSingleView()
+    {
+        if (IsSingleView)
+            ExitSingleView();
+        else
+            EnterSingleView();
+    }
+
+    public void EnterSingleView()
+    {
+        if (Current == null || IsSingleView)
+            return;
+
+        HideEverythingExcept(Current);
+        IsSingleView = true;
+        Current.RefreshOutline();
+        OnSingleViewChanged?.Invoke(true);
+    }
+
+    public void ExitSingleView()
+    {
+        if (!IsSingleView && hiddenCellParts.Count == 0)
+            return;
+
+        RestoreCellParts();
+        IsSingleView = false;
+        if (Current != null)
+            Current.RefreshOutline();
+        OnSingleViewChanged?.Invoke(false);
+    }
+
     public void ClearSelection()
     {
+        if (IsSingleView)
+            ExitSingleView();
+
         if (Current == null) return;
 
         Current.SetSelected(false);
@@ -118,5 +166,48 @@ public class OrganelleSelectionManager : MonoBehaviour
 
         if (infoUI != null)
             infoUI.HidePanel();
+    }
+
+    private void HideEverythingExcept(OrganelleTarget target)
+    {
+        RestoreCellParts();
+        if (target == null)
+            return;
+
+        CellOrganelleSetup cell = target.GetComponentInParent<CellOrganelleSetup>();
+        if (cell == null)
+            return;
+
+        Transform keep = target.transform;
+        Transform node = keep;
+        while (node != null && node != cell.transform)
+        {
+            Transform parent = node.parent;
+            if (parent == null)
+                break;
+
+            for (int i = 0; i < parent.childCount; i++)
+            {
+                Transform child = parent.GetChild(i);
+                if (child == node || child.name.StartsWith("_") || !child.gameObject.activeSelf)
+                    continue;
+
+                child.gameObject.SetActive(false);
+                hiddenCellParts.Add(child.gameObject);
+            }
+
+            node = parent;
+        }
+    }
+
+    private void RestoreCellParts()
+    {
+        for (int i = 0; i < hiddenCellParts.Count; i++)
+        {
+            if (hiddenCellParts[i] != null)
+                hiddenCellParts[i].SetActive(true);
+        }
+
+        hiddenCellParts.Clear();
     }
 }
