@@ -55,6 +55,10 @@ public class ARCellInteraction : MonoBehaviour
 
     public bool isTrackedImage = false;
 
+    public GameObject CurrentCell => spawnedObject;
+    public event System.Action<GameObject> OnActiveCellChanged;
+    public event System.Action OnCellReset;
+
     public string StatusMessage { get; private set; } =
         "Choose a cell, then tap a detected surface.";
 
@@ -138,6 +142,8 @@ public class ARCellInteraction : MonoBehaviour
             resetScale =
                 spawnedObject.transform.localScale;
         }
+
+        OnActiveCellChanged?.Invoke(spawnedObject);
     }
 
     public void ClearSpawned()
@@ -165,6 +171,9 @@ public class ARCellInteraction : MonoBehaviour
         isDragging = false;
         suppressTap = false;
         blockGestureUntilRelease = false;
+
+        OnCellReset?.Invoke();
+        OnActiveCellChanged?.Invoke(null);
     }
 
     // =====================================================
@@ -571,6 +580,8 @@ public class ARCellInteraction : MonoBehaviour
             spawnedObject = null;
             isTrackedImage = false;
 
+            OnActiveCellChanged?.Invoke(null);
+
             StatusMessage =
                 "Selected " +
                 selectedPrefab.name +
@@ -647,6 +658,8 @@ public class ARCellInteraction : MonoBehaviour
             spawnedObject
                 .AddComponent<CellOrganelleSetup>();
         }
+
+        OnActiveCellChanged?.Invoke(spawnedObject);
 
         Debug.Log(
             "Spawned " +
@@ -741,6 +754,8 @@ public class ARCellInteraction : MonoBehaviour
 
         spawnedObject.transform.localScale =
             resetScale;
+
+        OnCellReset?.Invoke();
 
         StatusMessage =
             "Cell size and rotation reset.";
@@ -846,6 +861,9 @@ public class ARCellInteraction : MonoBehaviour
         isTrackedImage = false;
         isDragging = false;
         suppressTap = false;
+
+        OnCellReset?.Invoke();
+        OnActiveCellChanged?.Invoke(null);
 
         StatusMessage =
             "Cell cleared. Tap a detected surface to place it again.";

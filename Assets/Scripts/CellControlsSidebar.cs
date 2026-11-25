@@ -20,6 +20,10 @@ public class CellControlsSidebar : MonoBehaviour
 
     private GameObject sidebar;
     private TMP_Text toggleLabel;
+    private Button crossSectionButton;
+    private Image crossSectionButtonImage;
+    private TMP_Text crossSectionButtonLabel;
+    private ARPlacementManager placementManager;
     private bool isOpen;
 
     private void Start()
@@ -129,7 +133,7 @@ public class CellControlsSidebar : MonoBehaviour
 
         SetAnchors(
             panelRect,
-            new Vector2(0.66f, 0.36f),
+            new Vector2(0.66f, 0.30f),
             new Vector2(0.94f, 0.86f));
 
         Image panelImage = sidebar.GetComponent<Image>();
@@ -210,6 +214,8 @@ public class CellControlsSidebar : MonoBehaviour
             }
 
         }
+
+        BuildCrossSectionButton(panelRect, sampleText);
 
         //
         // CONTROLS TOP BUTTON
@@ -363,6 +369,9 @@ public class CellControlsSidebar : MonoBehaviour
     {
         isOpen = open;
 
+        if (open)
+            RefreshCrossSectionButton();
+
         if (sidebar != null)
         {
             sidebar.SetActive(open);
@@ -372,6 +381,133 @@ public class CellControlsSidebar : MonoBehaviour
         {
             toggleLabel.text =
                 open ? "CLOSE" : "CONTROLS";
+        }
+    }
+
+    private void OnDestroy()
+    {
+        if (placementManager != null)
+            placementManager.OnCrossSectionUIChanged -= RefreshCrossSectionButton;
+    }
+
+    private void BuildCrossSectionButton(RectTransform panelRect, TMP_Text sampleText)
+    {
+        GameObject buttonObject = new GameObject(
+            "CrossSectionButton",
+            typeof(RectTransform),
+            typeof(Image),
+            typeof(Button));
+
+        buttonObject.transform.SetParent(panelRect, false);
+        buttonObject.transform.localScale = Vector3.one;
+        buttonObject.transform.localRotation = Quaternion.identity;
+
+        RectTransform rect = buttonObject.GetComponent<RectTransform>();
+        Vector3 position = rect.localPosition;
+        position.z = 0f;
+        rect.localPosition = position;
+
+        LayoutElement element = buttonObject.AddComponent<LayoutElement>();
+        element.ignoreLayout = false;
+        element.minHeight = 0;
+        element.preferredHeight = 0;
+        element.flexibleHeight = 1;
+
+        crossSectionButtonImage = buttonObject.GetComponent<Image>();
+        Image templateImage = clearButton != null ? clearButton.GetComponent<Image>() : null;
+        if (templateImage != null)
+        {
+            crossSectionButtonImage.sprite = templateImage.sprite;
+            crossSectionButtonImage.type = templateImage.type;
+            crossSectionButtonImage.material = templateImage.material;
+            crossSectionButtonImage.pixelsPerUnitMultiplier = templateImage.pixelsPerUnitMultiplier;
+        }
+        crossSectionButtonImage.color = new Color32(48, 65, 82, 255);
+
+        crossSectionButton = buttonObject.GetComponent<Button>();
+        crossSectionButton.targetGraphic = crossSectionButtonImage;
+        if (clearButton != null)
+        {
+            crossSectionButton.transition = clearButton.transition;
+            crossSectionButton.colors = clearButton.colors;
+            crossSectionButton.spriteState = clearButton.spriteState;
+        }
+        crossSectionButton.onClick.AddListener(OnCrossSectionClicked);
+
+        GameObject labelObject = new GameObject(
+            "Label",
+            typeof(RectTransform),
+            typeof(TextMeshProUGUI));
+        RectTransform labelRect = labelObject.GetComponent<RectTransform>();
+        labelRect.SetParent(rect, false);
+        SetAnchors(labelRect, Vector2.zero, Vector2.one);
+
+        crossSectionButtonLabel = labelObject.GetComponent<TextMeshProUGUI>();
+        if (sampleText != null)
+            crossSectionButtonLabel.font = sampleText.font;
+        crossSectionButtonLabel.text = "Cross Section";
+        crossSectionButtonLabel.color = Color.white;
+        crossSectionButtonLabel.fontStyle = FontStyles.Bold;
+        crossSectionButtonLabel.enableAutoSizing = true;
+        crossSectionButtonLabel.fontSizeMin = 16;
+        crossSectionButtonLabel.fontSizeMax = 36;
+        crossSectionButtonLabel.alignment = TextAlignmentOptions.Center;
+        crossSectionButtonLabel.raycastTarget = false;
+
+        placementManager = FindFirstObjectByType<ARPlacementManager>();
+        if (placementManager != null)
+        {
+            placementManager.OnCrossSectionUIChanged -= RefreshCrossSectionButton;
+            placementManager.OnCrossSectionUIChanged += RefreshCrossSectionButton;
+        }
+
+        RefreshCrossSectionButton();
+    }
+
+    private void OnCrossSectionClicked()
+    {
+        if (placementManager == null)
+            placementManager = FindFirstObjectByType<ARPlacementManager>();
+
+        if (placementManager != null)
+            placementManager.ToggleCrossSectionPanel();
+
+        CloseSidebar();
+    }
+
+    private void RefreshCrossSectionButton()
+    {
+        if (crossSectionButton == null || crossSectionButtonImage == null || crossSectionButtonLabel == null)
+            return;
+
+        if (placementManager == null)
+            placementManager = FindFirstObjectByType<ARPlacementManager>();
+
+        bool isPlaneMode = placementManager == null || placementManager.IsPlanePlacementMode;
+        crossSectionButton.gameObject.SetActive(isPlaneMode);
+        if (!isPlaneMode)
+            return;
+
+        bool isSliderOpen = placementManager != null && placementManager.IsCrossSectionOpen;
+        int percent = placementManager != null
+            ? Mathf.RoundToInt(Mathf.Clamp01(placementManager.CrossSectionSliceAmount) * 100f)
+            : 0;
+
+        if (isSliderOpen)
+        {
+            crossSectionButtonImage.color = new Color(0f, 0.831f, 0.667f, 1f);
+            crossSectionButtonLabel.color = new Color(0.043f, 0.067f, 0.125f, 1f);
+            crossSectionButtonLabel.text = "Hide Slice";
+        }
+        else
+        {
+            crossSectionButtonImage.color = new Color32(48, 65, 82, 255);
+            crossSectionButtonLabel.color = percent > 0
+                ? new Color(0f, 0.831f, 0.667f, 1f)
+                : Color.white;
+            crossSectionButtonLabel.text = percent > 0
+                ? $"Slice ({percent}%)"
+                : "Cross Section";
         }
     }
 }

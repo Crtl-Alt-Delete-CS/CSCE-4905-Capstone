@@ -33,6 +33,15 @@ public class OrganelleSelectionManager : MonoBehaviour
     private Vector3 savedLocalScale;
     private bool hasSavedTransform;
 
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+    private static void ResetStaticState()
+    {
+        _instance = null;
+        OnOrganelleSelected = null;
+        OnSelectionCleared = null;
+        OnSingleViewChanged = null;
+    }
+
     public OrganelleTarget Current { get; private set; }
     public bool IsSingleView { get; private set; }
 
@@ -83,6 +92,7 @@ public class OrganelleSelectionManager : MonoBehaviour
         for (int i = 0; i < count; i++)
         {
             if (HitBuffer[i].distance >= bestDistance) continue;
+            if (CellCrossSectionController.IsPointClipped(HitBuffer[i].point)) continue;
             OrganelleTarget t = HitBuffer[i].collider.GetComponentInParent<OrganelleTarget>();
             if (t == null) continue;
             best = t;

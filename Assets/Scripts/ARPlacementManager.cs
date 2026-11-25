@@ -27,6 +27,19 @@ public class ARPlacementManager : MonoBehaviour
     private GameObject arControls;
     [SerializeField] private GameObject cellControlsPanel;
 
+    private CellCrossSectionController crossSectionController;
+    private GameObject crossSectionControl;
+    private Slider crossSectionSlider;
+    private Text crossSectionValueLabel;
+    private Sprite sliderHandleSprite;
+    private Texture2D sliderHandleTexture;
+    private bool crossSectionOpen;
+
+    public event System.Action OnCrossSectionUIChanged;
+    public bool IsPlanePlacementMode => arExperienceActive && mode == ARMode.PlanePlacement;
+    public bool IsCrossSectionOpen => crossSectionOpen;
+    public float CrossSectionSliceAmount => crossSectionController != null ? crossSectionController.SliceAmount : 0f;
+
     private Text arStatusLabel;
     private string currentARStatus;
     private bool arExperienceActive;
@@ -66,9 +79,27 @@ public class ARPlacementManager : MonoBehaviour
         if (cellControlsPanel == null)
             cellControlsPanel = FindObjectByName("ControlsPanel");
 
+        crossSectionController = GetComponent<CellCrossSectionController>();
+        if (crossSectionController == null)
+            crossSectionController = FindFirstObjectByType<CellCrossSectionController>();
+        if (crossSectionController == null)
+            crossSectionController = gameObject.AddComponent<CellCrossSectionController>();
+
         mode = startMode;
 
         SetARExperienceActive(false);
+    }
+
+    private void OnDestroy()
+    {
+        if (crossSectionController != null)
+            crossSectionController.OnSliceAmountChanged -= HandleCrossSectionChanged;
+
+        if (sliderHandleSprite != null)
+            Destroy(sliderHandleSprite);
+
+        if (sliderHandleTexture != null)
+            Destroy(sliderHandleTexture);
     }
 
     private void Start()
@@ -196,6 +227,8 @@ public class ARPlacementManager : MonoBehaviour
             ToggleMode
         );
 
+        BuildCrossSectionControl(arControls.transform);
+
         arStatusLabel = AddLabel(
             arControls.transform,
             "Starting AR...",
@@ -300,6 +333,18 @@ public class ARPlacementManager : MonoBehaviour
 
         if (cellControlsPanel != null)
             cellControlsPanel.SetActive(planes);
+
+        if (!planes)
+        {
+            crossSectionOpen = false;
+            if (crossSectionController != null)
+                crossSectionController.ResetSlice();
+        }
+
+        if (crossSectionControl != null)
+            crossSectionControl.SetActive(planes && crossSectionOpen);
+
+        OnCrossSectionUIChanged?.Invoke();
     }
 
     private void SetARExperienceActive(bool active)
@@ -490,5 +535,220 @@ public class ARPlacementManager : MonoBehaviour
         );
 
         return button;
+    }
+
+    private void BuildCrossSectionControl(Transform parent)
+    {
+        GameObject container = new GameObject(
+            "Cross Section Control",
+            typeof(RectTransform),
+            typeof(Image)
+        );
+        crossSectionControl = container;
+        container.transform.SetParent(parent, false);
+
+        RectTransform containerRect = container.GetComponent<RectTransform>();
+        containerRect.anchorMin = new Vector2(0.06f, 0.835f);
+        containerRect.anchorMax = new Vector2(0.64f, 0.895f);
+        containerRect.offsetMin = Vector2.zero;
+        containerRect.offsetMax = Vector2.zero;
+
+        Image containerBg = container.GetComponent<Image>();
+        containerBg.color = new Color(0.035f, 0.12f, 0.105f, 0.88f);
+        containerBg.raycastTarget = true;
+
+        AddLabel(
+            container.transform,
+            "CROSS SECTION",
+            22,
+            FontStyle.Bold,
+            Color.white,
+            new Vector2(0.04f, 0.52f),
+            new Vector2(0.74f, 0.92f),
+            TextAnchor.MiddleLeft
+        );
+
+        crossSectionValueLabel = AddLabel(
+            container.transform,
+            "0%",
+            22,
+            FontStyle.Bold,
+            new Color(0.75f, 0.85f, 0.83f, 1f),
+            new Vector2(0.74f, 0.52f),
+            new Vector2(0.96f, 0.92f),
+            TextAnchor.MiddleRight
+        );
+
+        GameObject sliderObject = new GameObject(
+            "Cross Section Slider",
+            typeof(RectTransform),
+            typeof(Slider)
+        );
+        sliderObject.transform.SetParent(container.transform, false);
+
+        RectTransform sliderRect = sliderObject.GetComponent<RectTransform>();
+        sliderRect.anchorMin = new Vector2(0.04f, 0.08f);
+        sliderRect.anchorMax = new Vector2(0.96f, 0.52f);
+        sliderRect.offsetMin = Vector2.zero;
+        sliderRect.offsetMax = Vector2.zero;
+
+        GameObject trackObject = new GameObject(
+            "Background",
+            typeof(RectTransform),
+            typeof(Image)
+        );
+        trackObject.transform.SetParent(sliderRect, false);
+        RectTransform trackRect = trackObject.GetComponent<RectTransform>();
+        trackRect.anchorMin = new Vector2(0f, 0.36f);
+        trackRect.anchorMax = new Vector2(1f, 0.64f);
+        trackRect.offsetMin = Vector2.zero;
+        trackRect.offsetMax = Vector2.zero;
+        Image trackImage = trackObject.GetComponent<Image>();
+        trackImage.color = new Color(1f, 1f, 1f, 0.22f);
+        trackImage.raycastTarget = true;
+
+        GameObject fillArea = new GameObject("Fill Area", typeof(RectTransform));
+        fillArea.transform.SetParent(sliderRect, false);
+        RectTransform fillAreaRect = fillArea.GetComponent<RectTransform>();
+        fillAreaRect.anchorMin = new Vector2(0f, 0.36f);
+        fillAreaRect.anchorMax = new Vector2(1f, 0.64f);
+        fillAreaRect.offsetMin = Vector2.zero;
+        fillAreaRect.offsetMax = Vector2.zero;
+
+        GameObject fillObject = new GameObject(
+            "Fill",
+            typeof(RectTransform),
+            typeof(Image)
+        );
+        fillObject.transform.SetParent(fillAreaRect, false);
+        RectTransform fillRect = fillObject.GetComponent<RectTransform>();
+        fillRect.anchorMin = Vector2.zero;
+        fillRect.anchorMax = Vector2.one;
+        fillRect.offsetMin = Vector2.zero;
+        fillRect.offsetMax = Vector2.zero;
+        Image fillImage = fillObject.GetComponent<Image>();
+        fillImage.color = new Color(0f, 0.831f, 0.667f, 1f);
+        fillImage.raycastTarget = false;
+
+        GameObject handleArea = new GameObject("Handle Slide Area", typeof(RectTransform));
+        handleArea.transform.SetParent(sliderRect, false);
+        RectTransform handleAreaRect = handleArea.GetComponent<RectTransform>();
+        handleAreaRect.anchorMin = Vector2.zero;
+        handleAreaRect.anchorMax = Vector2.one;
+        handleAreaRect.offsetMin = new Vector2(17f, 0f);
+        handleAreaRect.offsetMax = new Vector2(-17f, 0f);
+
+        sliderHandleSprite = CreateCircleSprite(32);
+
+        GameObject handleObject = new GameObject(
+            "Handle",
+            typeof(RectTransform),
+            typeof(Image)
+        );
+        handleObject.transform.SetParent(handleAreaRect, false);
+        RectTransform handleRect = handleObject.GetComponent<RectTransform>();
+        handleRect.sizeDelta = new Vector2(34f, 34f);
+        Image handleImage = handleObject.GetComponent<Image>();
+        handleImage.sprite = sliderHandleSprite;
+        handleImage.color = Color.white;
+        handleImage.raycastTarget = true;
+
+        crossSectionSlider = sliderObject.GetComponent<Slider>();
+        crossSectionSlider.fillRect = fillRect;
+        crossSectionSlider.handleRect = handleRect;
+        crossSectionSlider.targetGraphic = handleImage;
+        crossSectionSlider.direction = Slider.Direction.LeftToRight;
+        crossSectionSlider.minValue = 0f;
+        crossSectionSlider.maxValue = 1f;
+        crossSectionSlider.wholeNumbers = false;
+        crossSectionSlider.value = crossSectionController != null ? crossSectionController.SliceAmount : 0f;
+        crossSectionSlider.onValueChanged.AddListener(OnCrossSectionSliderChanged);
+
+        if (crossSectionController != null)
+        {
+            crossSectionController.OnSliceAmountChanged -= HandleCrossSectionChanged;
+            crossSectionController.OnSliceAmountChanged += HandleCrossSectionChanged;
+            HandleCrossSectionChanged(crossSectionController.SliceAmount);
+        }
+
+        bool showPlaneControls = arExperienceActive && mode == ARMode.PlanePlacement;
+        crossSectionControl.SetActive(showPlaneControls && crossSectionOpen);
+        OnCrossSectionUIChanged?.Invoke();
+    }
+
+    public void ToggleCrossSectionPanel()
+    {
+        crossSectionOpen = !crossSectionOpen;
+
+        if (crossSectionControl != null)
+        {
+            bool showPlaneControls = arExperienceActive && mode == ARMode.PlanePlacement;
+            crossSectionControl.SetActive(showPlaneControls && crossSectionOpen);
+        }
+
+        OnCrossSectionUIChanged?.Invoke();
+    }
+
+    private void OnCrossSectionSliderChanged(float value)
+    {
+        if (crossSectionController != null)
+            crossSectionController.SetSliceAmount(value);
+        else
+            UpdateCrossSectionReadout(value);
+    }
+
+    private void HandleCrossSectionChanged(float value)
+    {
+        if (crossSectionSlider != null)
+            crossSectionSlider.SetValueWithoutNotify(value);
+
+        UpdateCrossSectionReadout(value);
+        OnCrossSectionUIChanged?.Invoke();
+    }
+
+    private void UpdateCrossSectionReadout(float value)
+    {
+        if (crossSectionValueLabel == null)
+            return;
+
+        int percent = Mathf.RoundToInt(Mathf.Clamp01(value) * 100f);
+        crossSectionValueLabel.text = percent + "%";
+        crossSectionValueLabel.color = percent > 0
+            ? new Color(0f, 0.831f, 0.667f, 1f)
+            : new Color(0.75f, 0.85f, 0.83f, 1f);
+    }
+
+    private Sprite CreateCircleSprite(int size)
+    {
+        sliderHandleTexture = new Texture2D(size, size, TextureFormat.RGBA32, false);
+        sliderHandleTexture.name = "Cross Section Handle";
+        sliderHandleTexture.hideFlags = HideFlags.HideAndDontSave;
+        sliderHandleTexture.filterMode = FilterMode.Bilinear;
+        sliderHandleTexture.wrapMode = TextureWrapMode.Clamp;
+
+        Color[] pixels = new Color[size * size];
+        float center = size * 0.5f;
+        float radius = size * 0.5f - 1f;
+
+        for (int y = 0; y < size; y++)
+        {
+            for (int x = 0; x < size; x++)
+            {
+                float dx = (x + 0.5f) - center;
+                float dy = (y + 0.5f) - center;
+                float dist = Mathf.Sqrt(dx * dx + dy * dy);
+                float alpha = Mathf.Clamp01(radius - dist + 0.5f);
+                pixels[y * size + x] = new Color(1f, 1f, 1f, alpha);
+            }
+        }
+
+        sliderHandleTexture.SetPixels(pixels);
+        sliderHandleTexture.Apply();
+        return Sprite.Create(
+            sliderHandleTexture,
+            new Rect(0f, 0f, size, size),
+            new Vector2(0.5f, 0.5f),
+            100f
+        );
     }
 }

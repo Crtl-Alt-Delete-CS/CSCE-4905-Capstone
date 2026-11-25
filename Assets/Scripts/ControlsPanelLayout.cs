@@ -224,6 +224,9 @@ public class ControlsPanelLayout : MonoBehaviour
             case "ClearButton":
                 return "Clear";
 
+            case "CrossSectionButton":
+                return "Cross Section";
+
             default:
                 return objectName.Replace("Button", "");
         }

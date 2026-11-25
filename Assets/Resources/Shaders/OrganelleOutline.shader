@@ -28,6 +28,7 @@ Shader "BioVisionAR/OrganelleOutline"
             #pragma vertex vert
             #pragma fragment frag
             #include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
+            #include "Assets/Resources/Shaders/CrossSectionCommon.hlsl"
 
             CBUFFER_START(UnityPerMaterial)
                 half4 _OutlineColor;
@@ -43,6 +44,7 @@ Shader "BioVisionAR/OrganelleOutline"
             struct Varyings
             {
                 float4 positionCS : SV_POSITION;
+                float3 positionWS : TEXCOORD0;
             };
 
             Varyings vert(Attributes input)
@@ -59,11 +61,13 @@ Shader "BioVisionAR/OrganelleOutline"
                 float4 clip = TransformWViewToHClip(positionVS);
                 clip.xy += direction * (_OutlinePixels * 2.0) * clip.w / _ScreenParams.xy;
                 output.positionCS = clip;
+                output.positionWS = positionWS;
                 return output;
             }
 
             half4 frag(Varyings input) : SV_Target
             {
+                ApplyCrossSectionClip(input.positionWS);
                 return _OutlineColor;
             }
             ENDHLSL
